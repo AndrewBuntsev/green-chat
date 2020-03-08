@@ -1,3 +1,3 @@
-export default createAction = (type, payload) => ({
+export default (type, payload) => ({
     type, payload
 });

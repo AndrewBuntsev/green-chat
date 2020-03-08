@@ -1,15 +1,14 @@
 import * as Redux from 'redux';
-import Cookies from 'universal-cookie';
 
 import rootReducer from './rootReducer';
-import * as COOKIES from './../const/cookies';
+import * as screens from './../const/screens';
 
 
-const cookies = new Cookies();
 
 
 const defaultState = {
-    clientId: cookies.get(COOKIES.CLIENT_ID)
+    clientDetails: {},
+    activeScreen: screens.SPLASH
 };
 
 

@@ -1,9 +1,11 @@
+const statusCodes = require('./const/statusCodes');
 const dbClient = require('./dbClient');
+
 
 const testApi = app => {
     app.get('/api/test', (req, res) => {
         res.status(200);
-        res.json({ status: 'SUCCESS', message: '', payload: { hey: 'hello' } });
+        res.json({ status: statusCodes.SUCCESS, message: '', payload: { hey: 'hello' } });
     });
 };
 
@@ -14,15 +16,15 @@ const getClient = app => {
             const client = await dbClient.getClient({ clientId: clientId });
             if (client) {
                 res.status(200);
-                res.json({ status: 'SUCCESS', message: '', payload: client });
+                res.json({ status: statusCodes.SUCCESS, message: '', payload: client });
             } else {
                 res.status(200);
-                res.json({ status: 'SUCCESS', message: `Client with ID ${clientId} not found`, payload: null });
+                res.json({ status: statusCodes.SUCCESS, message: `Client with ID ${clientId} not found`, payload: null });
             }
         }
         catch (err) {
             res.status(500);
-            res.json({ status: 'ERROR', message: err, payload: null });
+            res.json({ status: statusCodes.ERROR, message: err, payload: null })
         }
     });
 };
@@ -32,10 +34,12 @@ const addClient = app => {
         const { clientId, clientName } = req.body;
         try {
             await dbClient.addClient({ clientId, clientName });
+            const client = await dbClient.getClient({ clientId: clientId });
+            res.json({ status: statusCodes.SUCCESS, message: '', payload: client });
         }
         catch (err) {
             res.status(500);
-            res.json({ status: 'ERROR', message: err, payload: null });
+            res.json({ status: statusCodes.ERROR, message: err, payload: null });
         }
     });
 };

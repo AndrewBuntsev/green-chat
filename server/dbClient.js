@@ -7,12 +7,14 @@ const MONGO_CLIENT_OPTIONS = { useUnifiedTopology: true, useNewUrlParser: true }
 
 exports.getClient = async options => {
     const { clientId } = options;
-    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
-    const db = mongoClient.db(MONGO_DB_NAME);
     if (!clientId) {
         throw 'ClientId parameter is not provided';
     }
+
+    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
+    const db = mongoClient.db(MONGO_DB_NAME);
     let client = await db.collection('clients').find({ clientId: clientId }).next();
+
     mongoClient.close();
     return client;
 };
