@@ -24,6 +24,7 @@ const getClient = app => {
         }
         catch (err) {
             res.status(500);
+            console.error(err);
             res.json({ status: statusCodes.ERROR, message: err, payload: null })
         }
     });
@@ -39,7 +40,23 @@ const addClient = app => {
         }
         catch (err) {
             res.status(500);
+            console.error(err);
             res.json({ status: statusCodes.ERROR, message: err, payload: null });
+        }
+    });
+};
+
+const searchClients = app => {
+    app.get('/api/searchClients', async (req, res) => {
+        try {
+            const clients = await dbClient.searchClients({ searchTerm: req.query.searchTerm });
+            res.status(200);
+            res.json({ status: statusCodes.SUCCESS, message: '', payload: clients });
+        }
+        catch (err) {
+            res.status(500);
+            console.error(err);
+            res.json({ status: statusCodes.ERROR, message: err, payload: null })
         }
     });
 };
@@ -49,4 +66,5 @@ module.exports = app => {
     testApi(app);
     getClient(app);
     addClient(app);
+    searchClients(app);
 };

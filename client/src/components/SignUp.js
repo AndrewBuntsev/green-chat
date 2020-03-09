@@ -7,6 +7,10 @@ import * as responseStatus from './../const/responseStatus';
 import createAction from './../redux/createAction';
 import * as actionTypes from "./../redux/actionTypes";
 
+
+
+
+
 class SignUp extends Component {
     constructor(props) {
         super(props);
@@ -17,6 +21,7 @@ class SignUp extends Component {
     }
 
     onLoginClick = async () => {
+
         if (this.state.clientName) {
             const response = await api.addClient({ clientId: this.state.clientId, clientName: this.state.clientName });
             if (response && response.status == responseStatus.SUCCESS && response.payload) {

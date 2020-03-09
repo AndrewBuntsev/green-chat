@@ -38,3 +38,21 @@ exports.addClient = async options => {
     mongoClient.close();
 };
 
+exports.searchClients = async options => {
+    const { searchTerm } = options;
+    if (!searchTerm) {
+        throw 'searchTerm parameter is not provided';
+    }
+
+    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
+    const db = mongoClient.db(MONGO_DB_NAME);
+
+    const searchRegex = new RegExp(searchTerm);
+    const results = await Promise.all([
+        db.collection('clients').find({ clientId: searchRegex }).project({ _id: 0 }).toArray(),
+        db.collection('clients').find({ clientName: searchRegex }).project({ _id: 0 }).toArray()]);
+
+    mongoClient.close();
+    // return list of unique clients (unique by clientId)
+    return [...results[0], ...results[1]].filter((el, ind, arr) => arr.find(e => e.clientId == el.clientId) == el);
+};

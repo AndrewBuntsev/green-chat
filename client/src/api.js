@@ -15,3 +15,7 @@ export const addClient = (clientDetails) => {
         body: JSON.stringify(clientDetails)
     }).then(res => res.json());
 };
+
+export const searchClients = searchTerm => {
+    return fetch(`${ENDPOINT}/api/searchClients?searchTerm=${searchTerm}`).then(res => res.json());
+};

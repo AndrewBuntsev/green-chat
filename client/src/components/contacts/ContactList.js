@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import SearchClient from './SearchClient';
 
 /* #region Styles */
 const containerStyle = {
@@ -40,9 +41,10 @@ export default class ContactList extends Component {
     return (
       <div style={containerStyle}>
         <ul style={listStyle}>{clients}</ul>
+        <SearchClient />
       </div>
     );
   }
 }
 
-export default ClientListComponent;
+

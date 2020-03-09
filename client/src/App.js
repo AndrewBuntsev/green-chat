@@ -12,12 +12,15 @@ import Splash from './components/Splash';
 import SignUp from './components/SignUp';
 import MainContainer from './components/MainContainer';
 import createAction from './redux/createAction';
+import delay from './helpers/delay';
 
 
 const cookies = new Cookies();
 
 class App extends React.Component {
   async componentDidMount() {
+
+    //await delay(1000);
 
     // try to get saved client ID
     const clientId = cookies.get(COOKIES.CLIENT_ID);
