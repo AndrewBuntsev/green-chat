@@ -1,0 +1,104 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Green Chat API",
+        "version": "version 1.0"
+    },
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/api/test": {
+            "get": {
+                "summary": "GET /api/test",
+                "responses": {
+                    "200": {
+                        "description": "Just test API function"
+                    }
+                },
+                "tags": [
+                    "Generic"
+                ]
+            }
+        },
+        "/api/getClient": {
+            "get": {
+                "summary": "GET /api/getClient?clientId",
+                "responses": {
+                    "200": {
+                        "description": "Returns client details by clientId"
+                    }
+                },
+                "tags": [
+                    "Generic"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "clientId",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/api/searchClients": {
+            "get": {
+                "summary": "GET /api/searchClients?searchTerm",
+                "responses": {
+                    "200": {
+                        "description": "Returns clients list by search term (search by ClientId & ClientName)"
+                    }
+                },
+                "tags": [
+                    "Generic"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "searchTerm",
+                        "required": true,
+                        "type": "string"
+                    }
+                ]
+            }
+        },
+        "/api/addClient": {
+            "post": {
+                "summary": "POST /api/addClient",
+                "responses": {
+                    "200": {
+                        "description": "Adds new client"
+                    }
+                },
+                "tags": [
+                    "Generic"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "description": "Client object that needs to be added to the store",
+                        "type": "object",
+                        "properties": {
+                            "clientId": {
+                                "type": "string"
+                            },
+                            "clientName": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

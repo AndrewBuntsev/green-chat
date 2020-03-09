@@ -19,6 +19,11 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+// swagger
+const swaggerJson = require('./swagger.json');
+const swaggerUi = require('swagger-ui-express');
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerJson));
+
 
 // declare API methods
 require('./api')(app);
