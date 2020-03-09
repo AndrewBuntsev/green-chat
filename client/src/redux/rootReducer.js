@@ -6,7 +6,15 @@ import * as screens from './../const/screens';
 
 const cookies = new Cookies();
 
-export default (state, action) => {
+export default (state, actions) => {
+    if (Array.isArray(actions)) {
+        return actions.reduce((state, action) => ({ ...state, ...handleAction(state, action) }), state);
+    }
+
+    return handleAction(state, actions);
+};
+
+function handleAction(state, action) {
     switch (action.type) {
         case actionTypes.SET_CLIENT_DETAILS:
             const { clientDetails } = action.payload;
@@ -19,4 +27,4 @@ export default (state, action) => {
         default:
             return state;
     }
-};
+}

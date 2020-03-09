@@ -4,8 +4,11 @@ import ContactList from './contacts/ContactList';
 export default class MainContainer extends Component {
     render() {
         return <div>
-            Test text
+            <div>
+                <button>Log Out</button>
+            </div>
             <ContactList />
+
             {/* <MessageListComponent />
             <SendMessageComponent />
             <ClientListComponent /> */}
