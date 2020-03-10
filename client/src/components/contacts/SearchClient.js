@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import FindClientResults from './SearchClientResults';
+import SearchClientResults from './SearchClientResults';
 import * as api from './../../api';
 import * as responseStatus from './../../const/responseStatus';
 
@@ -11,7 +11,7 @@ export default class SearchClient extends Component {
         searchInProgress: false
     };
 
-    onFindButtonClick = async () => {
+    onSearchButtonClick = async () => {
         if (this.state.searchInProgress) return;
 
         this.setState({ searchInProgress: true });
@@ -31,11 +31,11 @@ export default class SearchClient extends Component {
                 <span> Client ID or Name</span>
             </div>
             <div>
-                <button onClick={this.onFindButtonClick}>Find</button>
+                <button onClick={this.onSearchButtonClick}>Search</button>
             </div>
             <div>
                 {this.state.searchInProgress && <img src={require('./../../assets/spinner.gif')} width={70}></img>}
-                {this.state.searchPerformed && <FindClientResults clients={this.state.clients} />}
+                {this.state.searchPerformed && <SearchClientResults clients={this.state.clients} addContact={this.props.addContact} />}
             </div>
         </div>;
     }

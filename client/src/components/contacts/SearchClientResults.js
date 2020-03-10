@@ -18,7 +18,7 @@ export default class SearchClientResults extends Component {
             <div style={{ fontSize: '18px' }}>{`Found ${this.props.clients.length} clients`}</div>
             <div>
                 <ul style={listStyle}>
-                    {this.props.clients.map(client => <SearchClientResult clientName={client.clientName} clientId={client.clientId} key={client.clientId} />)}
+                    {this.props.clients.map(client => <SearchClientResult clientName={client.clientName} clientId={client.clientId} addContact={this.props.addContact} key={client.clientId} />)}
                 </ul>
             </div>
         </div>;

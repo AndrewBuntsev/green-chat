@@ -7,13 +7,12 @@ const resultItemStyle = {
     paddingBottom: '0.3em'
 };
 
-export default class SearchClientResult extends Component {
-    render() {
-        return <div style={resultItemStyle}>
-            <span>{this.props.clientName}</span>
-            <span>{this.props.clientId}</span>
-            <button>Add to contact list</button>
-            <button>Send message</button>
-        </div>;
-    }
+export default function SearchClientResult(props) {
+    return <div style={resultItemStyle}>
+        <span>{props.clientName}</span>
+        <span>{props.clientId}</span>
+        <button onClick={() => props.addContact(props.clientId, props.clientName)}>Add to contact list</button>
+        <button>Send message</button>
+    </div>;
+
 }

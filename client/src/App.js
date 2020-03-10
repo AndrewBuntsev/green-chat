@@ -18,6 +18,7 @@ import delay from './helpers/delay';
 const cookies = new Cookies();
 
 class App extends React.Component {
+  //TODO: add error handlig from the API calls
   async componentDidMount() {
 
     //await delay(1000);
