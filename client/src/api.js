@@ -16,6 +16,22 @@ export const addClient = (clientDetails) => {
     }).then(res => res.json());
 };
 
+export const addContact = (clientId, contact) => {
+    return fetch(`${ENDPOINT}/api/addContact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientId, contact })
+    }).then(res => res.json());
+};
+
+export const removeContact = (clientId, contactId) => {
+    return fetch(`${ENDPOINT}/api/removeContact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientId, contactId })
+    }).then(res => res.json());
+};
+
 export const searchClients = searchTerm => {
     return fetch(`${ENDPOINT}/api/searchClients?searchTerm=${searchTerm}`).then(res => res.json());
 };

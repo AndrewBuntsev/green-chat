@@ -46,6 +46,38 @@ const addClient = app => {
     });
 };
 
+const addContact = app => {
+    app.post('/api/addContact', async (req, res) => {
+        const { clientId, contact } = req.body;
+        try {
+            await dbClient.addContact({ clientId, contact });
+            const client = await dbClient.getClient({ clientId: clientId });
+            res.json({ status: statusCodes.SUCCESS, message: '', payload: client });
+        }
+        catch (err) {
+            res.status(500);
+            console.error(err);
+            res.json({ status: statusCodes.ERROR, message: err, payload: null });
+        }
+    });
+};
+
+const removeContact = app => {
+    app.post('/api/removeContact', async (req, res) => {
+        const { clientId, contactId } = req.body;
+        try {
+            await dbClient.removeContact({ clientId, contactId });
+            const client = await dbClient.getClient({ clientId: clientId });
+            res.json({ status: statusCodes.SUCCESS, message: '', payload: client });
+        }
+        catch (err) {
+            res.status(500);
+            console.error(err);
+            res.json({ status: statusCodes.ERROR, message: err, payload: null });
+        }
+    });
+};
+
 const searchClients = app => {
     app.get('/api/searchClients', async (req, res) => {
         try {
@@ -66,5 +98,7 @@ module.exports = app => {
     testApi(app);
     getClient(app);
     addClient(app);
+    addContact(app);
+    removeContact(app);
     searchClients(app);
 };

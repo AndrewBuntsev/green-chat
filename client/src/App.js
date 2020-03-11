@@ -7,18 +7,21 @@ import * as COOKIES from './const/cookies';
 import * as api from './api';
 import * as responseStatus from './const/responseStatus';
 import * as screens from './const/screens';
-import * as actionTypes from "./redux/actionTypes";
 import Splash from './components/Splash';
 import SignUp from './components/SignUp';
 import MainContainer from './components/MainContainer';
-import createAction from './redux/createAction';
 import delay from './helpers/delay';
+import setActiveScreen from './redux/actions/setActiveScreen';
+import setClientDetails from './redux/actions/setClientDetails';
+import dispatchCombinedAction from './redux/actions/dispatchCombinedAction';
 
 
 const cookies = new Cookies();
 
 class App extends React.Component {
   //TODO: add error handlig from the API calls
+
+  //TODO: add cookie manager
   async componentDidMount() {
 
     //await delay(1000);
@@ -28,9 +31,7 @@ class App extends React.Component {
     if (clientId) {
       const response = await api.getClient(clientId);
       if (response && response.status == responseStatus.SUCCESS && response.payload) {
-        //cookies.set(COOKIES.CLIENT_ID, clientDetails.clientId);
-        this.props.setClientDetails(response.payload);
-        //this.props.setActiveScreen(screens.MAIN);
+        this.props.dispatchCombinedAction([setClientDetails(response.payload), setActiveScreen(screens.MAIN)]);
         return;
       }
     }
@@ -55,8 +56,9 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  setActiveScreen: activeScreen => dispatch(createAction(actionTypes.SET_ACTIVE_SCREEN, { activeScreen: activeScreen })),
-  setClientDetails: clientDetails => dispatch(createAction(actionTypes.SET_CLIENT_DETAILS, { clientDetails: clientDetails }))
+  dispatchCombinedAction: actions => dispatch(dispatchCombinedAction(actions)),
+  setActiveScreen: activeScreen => dispatch(setActiveScreen(activeScreen)),
+  setClientDetails: clientDetails => dispatch(setClientDetails(clientDetails))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

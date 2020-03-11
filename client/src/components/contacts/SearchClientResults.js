@@ -3,7 +3,6 @@ import SearchClientResult from './SearchClientResult';
 
 const listStyle = {
     overflow: 'auto',
-    listStyle: 'none',
     background: '#d4f3e6',
     fontFamily: 'Garamond, serif',
     fontSize: '1.2rem',
@@ -16,10 +15,8 @@ export default class SearchClientResults extends Component {
     render() {
         return <div>
             <div style={{ fontSize: '18px' }}>{`Found ${this.props.clients.length} clients`}</div>
-            <div>
-                <ul style={listStyle}>
-                    {this.props.clients.map(client => <SearchClientResult clientName={client.clientName} clientId={client.clientId} addContact={this.props.addContact} key={client.clientId} />)}
-                </ul>
+            <div style={listStyle}>
+                {this.props.clients.map(client => <SearchClientResult clientName={client.clientName} clientId={client.clientId} addContact={this.props.addContact} key={client.clientId} />)}
             </div>
         </div>;
     }

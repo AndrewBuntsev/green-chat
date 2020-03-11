@@ -21,20 +21,70 @@ exports.getClient = async options => {
 
 exports.addClient = async options => {
     const { clientId, clientName } = options;
-    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
-    const db = mongoClient.db(MONGO_DB_NAME);
-    if (clientId) {
-        let client = await db.collection('clients').find({ clientId: clientId }).next();
-        if (client) {
-            throw `Cannot create a new client. The client ID ${clientId} already exists in the database`;
-        }
+    if (!clientId) {
+        throw `Cannot create a new client. The clientId parameter is mandatory.`;
     }
-
     if (!clientName) {
         throw `Cannot create a new client. The clientName parameter is mandatory. Client ID: ${clientId}`;
     }
 
+    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
+    const db = mongoClient.db(MONGO_DB_NAME);
+
+    let client = await db.collection('clients').find({ clientId: clientId }).next();
+    if (client) {
+        throw `Cannot create a new client. The client ID ${clientId} already exists in the database`;
+    }
+
     await db.collection('clients').insertOne({ clientId, clientName });
+    mongoClient.close();
+};
+
+exports.addContact = async options => {
+    const { clientId, contact } = options;
+    if (!clientId) {
+        throw `Cannot add the contact to non-existent client. The clientId parameter is mandatory.`;
+    }
+
+    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
+    const db = mongoClient.db(MONGO_DB_NAME);
+
+    let client = await db.collection('clients').find({ clientId: clientId }).next();
+    if (!client) {
+        throw `Cannot add the contact to non-existent client.`;
+    }
+
+    const contacts = client.contacts ? client.contacts : [];
+    // don't duplicate contacts!
+    if (contacts.every(c => c.clientId != contact.clientId)) {
+        //if (clientId != contact.clientId)
+        await db.collection('clients').updateOne({ clientId: clientId }, { $set: { contacts: [...contacts, contact] } });
+    }
+
+    mongoClient.close();
+};
+
+exports.removeContact = async options => {
+    const { clientId, contactId } = options;
+    if (!clientId) {
+        throw `Cannot remove the contact from non-existent client. The clientId parameter is mandatory.`;
+    }
+
+    if (!contactId) {
+        throw `Cannot remove the contact from the client {Clientid: ${clientId}}. The contactId parameter is mandatory.`;
+    }
+
+    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
+    const db = mongoClient.db(MONGO_DB_NAME);
+
+    let client = await db.collection('clients').find({ clientId: clientId }).next();
+    if (!client) {
+        throw `Cannot remove the contact from non-existent client.`;
+    }
+
+    const contacts = client.contacts ? client.contacts : [];
+    await db.collection('clients').updateOne({ clientId: clientId }, { $set: { contacts: contacts.filter(c => c.clientId != contactId) } });
+
     mongoClient.close();
 };
 

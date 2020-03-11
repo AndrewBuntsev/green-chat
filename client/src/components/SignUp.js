@@ -3,9 +3,11 @@ import { connect } from 'react-redux';
 import * as uuid from 'uuid';
 
 import * as api from './../api';
+import * as screens from '../const/screens';
 import * as responseStatus from './../const/responseStatus';
-import createAction from './../redux/createAction';
-import * as actionTypes from "./../redux/actionTypes";
+import setActiveScreen from '../redux/actions/setActiveScreen';
+import setClientDetails from '../redux/actions/setClientDetails';
+import dispatchCombinedAction from '../redux/actions/dispatchCombinedAction';
 
 
 
@@ -25,10 +27,7 @@ class SignUp extends Component {
         if (this.state.clientName) {
             const response = await api.addClient({ clientId: this.state.clientId, clientName: this.state.clientName });
             if (response && response.status == responseStatus.SUCCESS && response.payload) {
-                //cookies.set(COOKIES.CLIENT_ID, clientDetails.clientId);
-                this.props.setClientDetails(response.payload);
-
-                //this.props.setActiveScreen(screens.MAIN);
+                this.props.dispatchCombinedAction([setClientDetails(response.payload), setActiveScreen(screens.MAIN)]);
                 return;
             }
         }
@@ -52,8 +51,9 @@ class SignUp extends Component {
 //   });
 
 const mapDispatchToProps = dispatch => ({
-    setActiveScreen: activeScreen => dispatch(createAction(actionTypes.SET_ACTIVE_SCREEN, { activeScreen: activeScreen })),
-    setClientDetails: clientDetails => dispatch(createAction(actionTypes.SET_CLIENT_DETAILS, { clientDetails: clientDetails }))
+    dispatchCombinedAction: actions => dispatch(dispatchCombinedAction(actions)),
+    setActiveScreen: activeScreen => dispatch(setActiveScreen(activeScreen)),
+    setClientDetails: clientDetails => dispatch(setClientDetails(clientDetails))
 });
 
 export default connect(null, mapDispatchToProps)(SignUp);

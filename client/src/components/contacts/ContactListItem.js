@@ -13,7 +13,8 @@ const itemStyle = {
 export default function ContactListItem(props) {
   return (
     <div style={itemStyle}>
-      {`${props.clientName} (${props.clientId})`}
+      {`${props.contact.clientName}  `}
+      <button onClick={() => props.removeContact(props.contact.clientId)}> X </button>
     </div>
   );
 

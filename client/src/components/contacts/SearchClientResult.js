@@ -1,18 +1,30 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-const resultItemStyle = {
-    textAlign: 'left',
-    borderBottom: '1px gray dashed',
-    marginBottom: '0.1em',
-    paddingBottom: '0.3em'
+
+const styles = {
+    container: {
+        textAlign: 'left',
+        borderBottom: '1px gray dashed',
+        marginBottom: '0.1em',
+        paddingBottom: '0.3em'
+    },
+    clientId: {
+        fontSize: '12px'
+    },
+    addContactButton: {
+
+    },
+    sendMessageButton: {
+        float: 'right'
+    }
 };
 
 export default function SearchClientResult(props) {
-    return <div style={resultItemStyle}>
-        <span>{props.clientName}</span>
-        <span>{props.clientId}</span>
-        <button onClick={() => props.addContact(props.clientId, props.clientName)}>Add to contact list</button>
-        <button>Send message</button>
+    return <div style={styles.container}>
+        <div>{props.clientName}</div>
+        <div style={styles.clientId}>{props.clientId}</div>
+        <button style={styles.addContactButton} onClick={() => props.addContact(props.clientId, props.clientName)}>Add to contact list</button>
+        <button style={styles.sendMessageButton}>Send message</button>
     </div>;
 
 }

@@ -12,6 +12,7 @@ export default class SearchClient extends Component {
     };
 
     onSearchButtonClick = async () => {
+        if (!this.state.searchTerm) return;
         if (this.state.searchInProgress) return;
 
         this.setState({ searchInProgress: true });
@@ -27,11 +28,11 @@ export default class SearchClient extends Component {
         return <div>
             <div style={{ fontSize: '18px' }}>Find new contact</div>
             <div>
-                <input type='text' value={this.state.searchTerm} onChange={e => this.setState({ searchTerm: e.target.value })}></input>
-                <span> Client ID or Name</span>
+                <input type='text' value={this.state.searchTerm} placeholder='Client ID or Name' onChange={e => this.setState({ searchTerm: e.target.value })}></input>
             </div>
             <div>
                 <button onClick={this.onSearchButtonClick}>Search</button>
+                <button onClick={this.props.cancelSearch}>Cancel</button>
             </div>
             <div>
                 {this.state.searchInProgress && <img src={require('./../../assets/spinner.gif')} width={70}></img>}
