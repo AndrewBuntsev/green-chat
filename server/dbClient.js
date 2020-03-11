@@ -106,3 +106,45 @@ exports.searchClients = async options => {
     // return list of unique clients (unique by clientId)
     return [...results[0], ...results[1]].filter((el, ind, arr) => arr.find(e => e.clientId == el.clientId) == el);
 };
+
+exports.sendMessage = async options => {
+    const { senderId, receiverId, message } = options;
+    if (!senderId) {
+        throw `The senderId parameter is mandatory.`;
+    }
+
+    if (!receiverId) {
+        throw `The receiverId parameter is mandatory.`;
+    }
+
+    if (!message) {
+        throw `The message parameter is mandatory.`;
+    }
+
+    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
+    const db = mongoClient.db(MONGO_DB_NAME);
+
+    let client = await db.collection('clients').find({ clientId: senderId }).next();
+    if (!client) {
+        throw `Cannot find the sender with clientId: ${senderId}.`;
+    }
+
+    const contacts = client.contacts ? client.contacts : [];
+    const receiver = contacts.find(c => c.clientId == receiverId);
+    if (!receiver) {
+        throw `Cannot find the receiver with clientId: ${receiverId} on the sender's contact list.`;
+    }
+
+    const messageObject = { type: 'out', msg: message };
+    if (receiver.messages) {
+        receiver.messages.push(messageObject);
+    } else {
+        receiver.messages = [messageObject];
+    }
+
+    await db.collection('clients').updateOne({ clientId: senderId }, { $set: { contacts: contacts } });
+
+    //TODO: add inc message
+
+    mongoClient.close();
+};

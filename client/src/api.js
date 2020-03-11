@@ -35,3 +35,11 @@ export const removeContact = (clientId, contactId) => {
 export const searchClients = searchTerm => {
     return fetch(`${ENDPOINT}/api/searchClients?searchTerm=${searchTerm}`).then(res => res.json());
 };
+
+export const sendMessage = (senderId, receiverId, message) => {
+    return fetch(`${ENDPOINT}/api/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senderId, receiverId, message })
+    }).then(res => res.json());
+};

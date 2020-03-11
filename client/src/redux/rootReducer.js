@@ -23,6 +23,9 @@ function handleAction(state, action) {
         case actionTypes.SET_ACTIVE_SCREEN:
             return { ...state, activeScreen: action.payload.activeScreen };
 
+        case actionTypes.SET_ACTIVE_CONTACT:
+            return { ...state, activeContact: action.payload.activeContact };
+
         default:
             return state;
     }

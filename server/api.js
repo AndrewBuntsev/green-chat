@@ -93,6 +93,22 @@ const searchClients = app => {
     });
 };
 
+const sendMessage = app => {
+    app.post('/api/sendMessage', async (req, res) => {
+        const { senderId, receiverId, message } = req.body;
+        try {
+            await dbClient.sendMessage({ senderId, receiverId, message });
+            const client = await dbClient.getClient({ clientId: senderId });
+            res.json({ status: statusCodes.SUCCESS, message: '', payload: client });
+        }
+        catch (err) {
+            res.status(500);
+            console.error(err);
+            res.json({ status: statusCodes.ERROR, message: err, payload: null });
+        }
+    });
+};
+
 //TODO: add functions to swagger
 
 module.exports = app => {
@@ -102,4 +118,5 @@ module.exports = app => {
     addContact(app);
     removeContact(app);
     searchClients(app);
+    sendMessage(app);
 };

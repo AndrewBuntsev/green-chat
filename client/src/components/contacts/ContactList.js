@@ -9,7 +9,8 @@ const styles = {
     listStyle: 'none',
     fontFamily: 'Garamond, serif',
     padding: '0.5em',
-    gridColumn: '1'
+    gridColumn: '1',
+    gridRow: '2'
   },
   addContactButton: {
     width: '100%'
@@ -25,7 +26,8 @@ export default class ContactList extends Component {
   };
 
   render() {
-    let listItems = !this.props.contacts ? [] : this.props.contacts.map(contact => <ContactListItem contact={contact} key={contact.clientId} removeContact={this.props.removeContact} />);
+    let listItems = !this.props.contacts ? [] : this.props.contacts.map(contact =>
+      <ContactListItem contact={contact} key={contact.clientId} removeContact={this.props.removeContact} clickContact={this.props.setActiveContact} />);
 
     const contactsPanel = (
       <div>

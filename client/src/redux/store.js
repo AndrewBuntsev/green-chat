@@ -8,7 +8,8 @@ import * as screens from './../const/screens';
 
 const defaultState = {
     clientDetails: {},
-    activeScreen: screens.SPLASH
+    activeScreen: screens.SPLASH,
+    activeContact: null
 };
 
 

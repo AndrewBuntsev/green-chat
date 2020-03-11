@@ -6,14 +6,15 @@ const itemStyle = {
   color: 'green',
   fontWeight: 'bold',
   marginBottom: '0.1em',
-  paddingBottom: '0.3em'
+  paddingBottom: '0.3em',
+  cursor: 'pointer'
 };
 
 
 export default function ContactListItem(props) {
   return (
     <div style={itemStyle}>
-      {`${props.contact.clientName}  `}
+      <span onClick={() => props.clickContact(props.contact)}>{`${props.contact.clientName}  `}</span>
       <button onClick={() => props.removeContact(props.contact.clientId)}> X </button>
     </div>
   );
