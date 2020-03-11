@@ -6,6 +6,7 @@ import * as api from './api';
 import * as responseStatus from './const/responseStatus';
 import * as screens from './const/screens';
 import Splash from './components/Splash';
+import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import MainContainer from './components/MainContainer';
 import delay from './helpers/delay';
@@ -35,13 +36,14 @@ class App extends React.Component {
     }
 
     // display the SignUp screen
-    this.props.setActiveScreen(screens.SIGNUP);
+    this.props.setActiveScreen(screens.SIGNIN);
   }
 
   render() {
     return (
       <div className="App">
         {this.props.activeScreen == screens.SPLASH && <Splash />}
+        {this.props.activeScreen == screens.SIGNIN && <SignIn />}
         {this.props.activeScreen == screens.SIGNUP && <SignUp />}
         {this.props.activeScreen == screens.MAIN && <MainContainer />}
       </div>

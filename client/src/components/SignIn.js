@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import * as uuid from 'uuid';
 
 import * as api from './../api';
 import * as screens from '../const/screens';
@@ -10,22 +9,20 @@ import setClientDetails from '../redux/actions/setClientDetails';
 import dispatchCombinedAction from '../redux/actions/dispatchCombinedAction';
 
 
-
-
-
-class SignUp extends Component {
+class SignIn extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            clientId: uuid.v4(),
-            clientName: ''
+            clientId: ''
         }
     }
 
+    //TODO: Login spinner
+    //TODO: Login failure
     onLoginClick = async () => {
-
-        if (this.state.clientName) {
-            const response = await api.addClient({ clientId: this.state.clientId, clientName: this.state.clientName });
+        if (this.state.clientId) {
+            const response = await api.getClient(this.state.clientId);
+            console.log(response);
             if (response && response.status == responseStatus.SUCCESS && response.payload) {
                 this.props.dispatchCombinedAction([setClientDetails(response.payload), setActiveScreen(screens.MAIN)]);
                 return;
@@ -35,16 +32,14 @@ class SignUp extends Component {
 
     render() {
         return <div>
-            It looks like you are the first time here!<br /><br />
-            Your ID is <input type='text' value={this.state.clientId} style={{ width: '280px' }} disabled /> <br /><br />
-            Please tell us your preferrable name<br />
-            <input type='text' value={this.state.clientName} style={{ width: '280px' }} onChange={e => this.setState({ clientName: e.target.value })} /><br />
+            Enter your ID to Sign In
+            <input type='text' value={this.state.clientId} style={{ width: '280px' }} onChange={e => this.setState({ clientId: e.target.value })} /> <br />
             <div>
-                <button onClick={this.onLoginClick}>Start Chatting</button>
+                <button onClick={this.onLoginClick}>Sign In</button>
             </div>
+            <div>or create new account</div>
             <div>
-                If you have an existent account
-                <button onClick={() => this.props.setActiveScreen(screens.SIGNIN)}>Sign In</button>
+                <button onClick={() => this.props.setActiveScreen(screens.SIGNUP)}>Sign Up</button>
             </div>
         </div>;
     }
@@ -60,4 +55,4 @@ const mapDispatchToProps = dispatch => ({
     setClientDetails: clientDetails => dispatch(setClientDetails(clientDetails))
 });
 
-export default connect(null, mapDispatchToProps)(SignUp);
+export default connect(null, mapDispatchToProps)(SignIn);

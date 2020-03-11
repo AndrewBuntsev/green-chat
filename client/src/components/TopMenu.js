@@ -17,7 +17,7 @@ const styles = {
 
 class TopMenu extends Component {
     logOut = () => {
-        this.props.dispatchCombinedAction([setClientDetails(null), setActiveScreen(screens.SIGNUP)]);
+        this.props.dispatchCombinedAction([setClientDetails(null), setActiveScreen(screens.SIGNIN)]);
     };
 
     render() {
