@@ -93,6 +93,7 @@ const searchClients = app => {
     });
 };
 
+//TODO: add functions to swagger
 
 module.exports = app => {
     testApi(app);
