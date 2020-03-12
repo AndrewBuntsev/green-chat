@@ -9,6 +9,20 @@ const testApi = app => {
     });
 };
 
+const testDB = app => {
+    app.get('/api/testDB', async (req, res) => {
+        // try {
+        //     await dbClient.addMessage('ff051f3d-0374-45d4-a16b-eba1b1045735', '5664df86-1abe-468b-8019-d66e17049d6d', 'in', 'guess who');
+        //     res.json({ status: statusCodes.SUCCESS, message: '', payload: null });
+        // }
+        // catch (err) {
+        //     res.status(500);
+        //     console.error(err);
+        //     res.json({ status: statusCodes.ERROR, message: err, payload: null });
+        // }
+    });
+};
+
 const getClient = app => {
     app.get('/api/getClient', async (req, res) => {
         const { clientId } = req.query;
@@ -109,10 +123,13 @@ const sendMessage = app => {
     });
 };
 
+
+
 //TODO: add functions to swagger
 
 module.exports = app => {
     testApi(app);
+    testDB(app);
     getClient(app);
     addClient(app);
     addContact(app);

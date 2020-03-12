@@ -13,7 +13,22 @@ exports.getClient = async options => {
 
     const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
     const db = mongoClient.db(MONGO_DB_NAME);
-    let client = await db.collection('clients').find({ clientId: clientId }).next();
+    let client = await db.collection('clients').findOne({ clientId: clientId });
+
+    mongoClient.close();
+    return client;
+};
+
+exports.getClientBrief = async options => {
+    const { clientId } = options;
+    if (!clientId) {
+        throw 'ClientId parameter is not provided';
+    }
+
+    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
+    const db = mongoClient.db(MONGO_DB_NAME);
+    let client = await db.collection('clients').find({ clientId: clientId }).limit(1).project({ clientId: 1, clientName: 1, _id: 0 }).next();
+    //console.log(client);
 
     mongoClient.close();
     return client;
@@ -31,8 +46,8 @@ exports.addClient = async options => {
     const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
     const db = mongoClient.db(MONGO_DB_NAME);
 
-    let client = await db.collection('clients').find({ clientId: clientId }).next();
-    if (client) {
+    const exists = await db.collection('clients').find({ clientId: clientId }).limit(1).count();
+    if (exists) {
         throw `Cannot create a new client. The client ID ${clientId} already exists in the database`;
     }
 
@@ -49,17 +64,12 @@ exports.addContact = async options => {
     const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
     const db = mongoClient.db(MONGO_DB_NAME);
 
-    let client = await db.collection('clients').find({ clientId: clientId }).next();
-    if (!client) {
+    const exists = await db.collection('clients').find({ clientId: clientId }).limit(1).count();
+    if (!exists) {
         throw `Cannot add the contact to non-existent client.`;
     }
 
-    const contacts = client.contacts ? client.contacts : [];
-    // don't duplicate contacts!
-    if (contacts.every(c => c.clientId != contact.clientId)) {
-        //if (clientId != contact.clientId)
-        await db.collection('clients').updateOne({ clientId: clientId }, { $set: { contacts: [...contacts, contact] } });
-    }
+    await addContactIfNotExists(db, clientId, contact.clientId, contact.clientName);
 
     mongoClient.close();
 };
@@ -77,13 +87,10 @@ exports.removeContact = async options => {
     const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
     const db = mongoClient.db(MONGO_DB_NAME);
 
-    let client = await db.collection('clients').find({ clientId: clientId }).next();
-    if (!client) {
-        throw `Cannot remove the contact from non-existent client.`;
-    }
-
-    const contacts = client.contacts ? client.contacts : [];
-    await db.collection('clients').updateOne({ clientId: clientId }, { $set: { contacts: contacts.filter(c => c.clientId != contactId) } });
+    await db.collection('clients').updateOne({ clientId: clientId },
+        {
+            $pull: { contacts: { clientId: contactId } }
+        });
 
     mongoClient.close();
 };
@@ -99,8 +106,8 @@ exports.searchClients = async options => {
 
     const searchRegex = new RegExp(searchTerm);
     const results = await Promise.all([
-        db.collection('clients').find({ clientId: searchRegex }).project({ _id: 0 }).toArray(),
-        db.collection('clients').find({ clientName: searchRegex }).project({ _id: 0 }).toArray()]);
+        db.collection('clients').find({ clientId: searchRegex }).project({ clientId: 1, clientName: 1 }).toArray(),
+        db.collection('clients').find({ clientName: searchRegex }).project({ clientId: 1, clientName: 1 }).toArray()]);
 
     mongoClient.close();
     // return list of unique clients (unique by clientId)
@@ -124,27 +131,79 @@ exports.sendMessage = async options => {
     const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
     const db = mongoClient.db(MONGO_DB_NAME);
 
-    let client = await db.collection('clients').find({ clientId: senderId }).next();
-    if (!client) {
-        throw `Cannot find the sender with clientId: ${senderId}.`;
-    }
+    //TODO: try Promise.all
+    await addMessage(db, senderId, receiverId, 'out', message);
+    await addMessage(db, receiverId, senderId, 'in', message);
 
-    const contacts = client.contacts ? client.contacts : [];
-    const receiver = contacts.find(c => c.clientId == receiverId);
-    if (!receiver) {
-        throw `Cannot find the receiver with clientId: ${receiverId} on the sender's contact list.`;
-    }
+    // const contacts = client.contacts ? client.contacts : [];
+    // const receiver = contacts.find(c => c.clientId == receiverId);
+    // if (!receiver) {
+    //     throw `Cannot find the receiver with clientId: ${receiverId} on the sender's contact list.`;
+    // }
 
-    const messageObject = { type: 'out', msg: message };
-    if (receiver.messages) {
-        receiver.messages.push(messageObject);
-    } else {
-        receiver.messages = [messageObject];
-    }
+    // const messageObject = { type: 'out', msg: message };
+    // if (receiver.messages) {
+    //     receiver.messages.push(messageObject);
+    // } else {
+    //     receiver.messages = [messageObject];
+    // }
 
-    await db.collection('clients').updateOne({ clientId: senderId }, { $set: { contacts: contacts } });
+    // await db.collection('clients').updateOne({ clientId: senderId }, { $set: { contacts: contacts } });
 
-    //TODO: add inc message
 
     mongoClient.close();
+};
+
+
+
+
+
+// ----------------------------------private functions-------------------------
+
+addContactIfNotExists = async (db, clientId, contactId, contactName) => {
+    // if the contact already exists, do nothing
+    const exists = await db.collection('clients').find({ clientId: clientId, 'contacts.clientId': contactId }).limit(1).count();
+    if (exists) return;
+
+    // if no name provide it, retrieve it
+    let realContactName = contactName;
+    if (!realContactName) {
+        const contact = await db.collection('clients').find({ clientId: contactId }).limit(1).project({ clientId: 1, clientName: 1, _id: 0 }).next();
+        console.log(contact);
+        //contactName = await this.getClientBrief({ clientId: contactId }).clientName;
+        realContactName = contact.clientName;
+    }
+    console.log(realContactName);
+
+    try {
+        // create the contact
+        await db.collection('clients').updateOne(
+            { clientId: clientId },
+            {
+                $push:
+                {
+                    'contacts': { clientId: contactId, clientName: realContactName }
+                }
+            });
+    }
+    catch (err) {
+        console.error(err);
+        throw err;
+    }
+};
+
+
+addMessage = async (db, clientId, contactId, type, msg) => {
+    // add contact if it doesn't exist
+    addContactIfNotExists(db, clientId, contactId, null);
+
+    // add the message
+    await db.collection('clients').updateOne(
+        { clientId: clientId, 'contacts.clientId': contactId },
+        {
+            $push:
+            {
+                'contacts.$.messages': { type, msg }
+            }
+        });
 };

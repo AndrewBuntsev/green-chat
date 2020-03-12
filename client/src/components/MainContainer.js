@@ -59,6 +59,7 @@ class MainContainer extends Component {
                 setActiveContact={this.setActiveContact} />
             {this.props.activeContact && <MessagingArea
                 contact={this.props.activeContact}
+                key={this.props.activeContact.clientId}
                 sendMessage={this.sendMessage} />}
         </div>;
     }
