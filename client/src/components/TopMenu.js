@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as screens from '../const/screens';
 import setActiveScreen from '../redux/actions/setActiveScreen';
 import setClientDetails from '../redux/actions/setClientDetails';
+import setActiveContact from '../redux/actions/setActiveContact';
 import dispatchCombinedAction from '../redux/actions/dispatchCombinedAction';
 
 
@@ -17,7 +18,7 @@ const styles = {
 
 class TopMenu extends Component {
     logOut = () => {
-        this.props.dispatchCombinedAction([setClientDetails(null), setActiveScreen(screens.SIGNIN)]);
+        this.props.dispatchCombinedAction([setClientDetails(null), setActiveScreen(screens.SIGNIN)], setActiveContact(null));
     };
 
     render() {
@@ -38,7 +39,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     dispatchCombinedAction: actions => dispatch(dispatchCombinedAction(actions)),
     setActiveScreen: activeScreen => dispatch(setActiveScreen(activeScreen)),
-    setClientDetails: clientDetails => dispatch(setClientDetails(clientDetails))
+    setClientDetails: clientDetails => dispatch(setClientDetails(clientDetails)),
+    setActiveContact: activeContact => dispatch(setActiveContact(activeContact))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(TopMenu);

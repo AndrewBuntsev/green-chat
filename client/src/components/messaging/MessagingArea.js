@@ -15,9 +15,15 @@ const styles = {
         overflow: 'auto',
         listStyle: 'none'
     },
-    messageOut: {
-        //border: 'red 1px solid',
+    messageIn: {
         backgroundColor: '#DDDDDD',
+        borderRadius: '5px',
+        marginBottom: '5px',
+        width: '70%',
+        float: 'left'
+    },
+    messageOut: {
+        backgroundColor: '#FADCD9',
         borderRadius: '5px',
         marginBottom: '5px',
         width: '70%',
@@ -37,27 +43,6 @@ const styles = {
     }
 };
 
-const listStyle = {
-    width: '60%',
-    height: '100px',
-    overflow: 'auto',
-    listStyle: 'none',
-    background: '#d4f3e6',
-    fontFamily: 'Garamond, serif',
-    fontSize: '1.2rem',
-    border: '1px #a59b15 solid',
-    padding: '0.5em',
-    boxShadow: '5px 5px #d9d9d9',
-    borderRadius: '3px'
-};
-
-const listItemStyle = {
-    textAlign: 'left',
-    borderBottom: '1px gray dashed',
-    marginBottom: '0.1em',
-    paddingBottom: '0.3em'
-};
-
 
 export default class MessagingArea extends Component {
 
@@ -74,7 +59,7 @@ export default class MessagingArea extends Component {
 
     render() {
         const messages = this.props.contact.messages
-            ? this.props.contact.messages.map((m, i) => <li style={styles.messageOut} key={i}>{m.msg}</li>)
+            ? this.props.contact.messages.map((m, i) => <li style={m.type == 'in' ? styles.messageIn : styles.messageOut} key={i}>{m.msg}</li>)
             : [];
 
         return <div style={styles.container} key={this.props.contact.contactId}>

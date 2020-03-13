@@ -40,20 +40,40 @@ class MainContainer extends Component {
         }
     };
 
+    refreshClientScreen = clientDetails => {
+        // refresh clientDetails & activeContact
+        const activeContact = (clientDetails.contacts && this.props.activeContact)
+            ? clientDetails.contacts.find(c => c.clientId == this.props.activeContact.clientId)
+            : null;
+        this.props.dispatchCombinedAction([setClientDetails(clientDetails), setActiveContact(activeContact)]);
+    };
+
     sendMessage = async message => {
         const response = await api.sendMessage(this.props.clientDetails.clientId, this.props.activeContact.clientId, message);
         if (response && response.status == responseStatus.SUCCESS && response.payload) {
-            // refresh clientDetails & activeContact
-            const activeContact = response.payload.contacts.find(c => c.clientId == this.props.activeContact.clientId);
-            this.props.dispatchCombinedAction([setClientDetails(response.payload), setActiveContact(activeContact)]);
+            this.refreshClientScreen(response.payload);
         }
     };
+
+    reloadClientDetails = async () => {
+        const response = await api.getClient(this.props.clientDetails.clientId);
+        if (response && response.status == responseStatus.SUCCESS && response.payload) {
+            this.refreshClientScreen(response.payload);
+        }
+    };
+
+    refreshTimer;
+
+    componentDidMount() {
+        this.refreshTimer = setInterval(this.reloadClientDetails, 4000);
+    }
 
     render() {
         return <div style={styles.container}>
             <TopMenu />
             <ContactList
                 contacts={this.props.clientDetails.contacts}
+                activeContact={this.props.activeContact}
                 addContact={this.addContact}
                 removeContact={this.removeContact}
                 setActiveContact={this.setActiveContact} />
@@ -62,6 +82,10 @@ class MainContainer extends Component {
                 key={this.props.activeContact.clientId}
                 sendMessage={this.sendMessage} />}
         </div>;
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.refreshTimer);
     }
 }
 

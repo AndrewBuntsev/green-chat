@@ -27,7 +27,12 @@ export default class ContactList extends Component {
 
   render() {
     let listItems = !this.props.contacts ? [] : this.props.contacts.map(contact =>
-      <ContactListItem contact={contact} key={contact.clientId} removeContact={this.props.removeContact} clickContact={this.props.setActiveContact} />);
+      <ContactListItem
+        contact={contact}
+        activeContact={this.props.activeContact}
+        key={contact.clientId}
+        removeContact={this.props.removeContact}
+        clickContact={this.props.setActiveContact} />);
 
     const contactsPanel = (
       <div>

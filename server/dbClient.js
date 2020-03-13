@@ -28,7 +28,6 @@ exports.getClientBrief = async options => {
     const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
     const db = mongoClient.db(MONGO_DB_NAME);
     let client = await db.collection('clients').find({ clientId: clientId }).limit(1).project({ clientId: 1, clientName: 1, _id: 0 }).next();
-    //console.log(client);
 
     mongoClient.close();
     return client;
@@ -135,22 +134,6 @@ exports.sendMessage = async options => {
     await addMessage(db, senderId, receiverId, 'out', message);
     await addMessage(db, receiverId, senderId, 'in', message);
 
-    // const contacts = client.contacts ? client.contacts : [];
-    // const receiver = contacts.find(c => c.clientId == receiverId);
-    // if (!receiver) {
-    //     throw `Cannot find the receiver with clientId: ${receiverId} on the sender's contact list.`;
-    // }
-
-    // const messageObject = { type: 'out', msg: message };
-    // if (receiver.messages) {
-    //     receiver.messages.push(messageObject);
-    // } else {
-    //     receiver.messages = [messageObject];
-    // }
-
-    // await db.collection('clients').updateOne({ clientId: senderId }, { $set: { contacts: contacts } });
-
-
     mongoClient.close();
 };
 
@@ -166,36 +149,26 @@ addContactIfNotExists = async (db, clientId, contactId, contactName) => {
     if (exists) return;
 
     // if no name provide it, retrieve it
-    let realContactName = contactName;
-    if (!realContactName) {
+    if (!contactName) {
         const contact = await db.collection('clients').find({ clientId: contactId }).limit(1).project({ clientId: 1, clientName: 1, _id: 0 }).next();
-        console.log(contact);
-        //contactName = await this.getClientBrief({ clientId: contactId }).clientName;
-        realContactName = contact.clientName;
+        contactName = contact.clientName;
     }
-    console.log(realContactName);
 
-    try {
-        // create the contact
-        await db.collection('clients').updateOne(
-            { clientId: clientId },
+    // create the contact
+    await db.collection('clients').updateOne(
+        { clientId: clientId },
+        {
+            $push:
             {
-                $push:
-                {
-                    'contacts': { clientId: contactId, clientName: realContactName }
-                }
-            });
-    }
-    catch (err) {
-        console.error(err);
-        throw err;
-    }
+                'contacts': { clientId: contactId, clientName: contactName }
+            }
+        });
 };
 
 
 addMessage = async (db, clientId, contactId, type, msg) => {
     // add contact if it doesn't exist
-    addContactIfNotExists(db, clientId, contactId, null);
+    await addContactIfNotExists(db, clientId, contactId, null);
 
     // add the message
     await db.collection('clients').updateOne(
