@@ -1,11 +1,21 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Provider } from 'react-redux';
+import { NavigationContainer } from '@react-navigation/native';
+import store from './redux/store';
+import MainContainer from './components/MainContainer';
+import MyTabs from './components/MyTabs';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-    </View>
+    <Provider store={store}>
+      <NavigationContainer>
+        <View style={styles.container}>
+          <MyTabs></MyTabs>
+          {/* <MainContainer></MainContainer> */}
+        </View>
+      </NavigationContainer>
+    </Provider>
   );
 }
 
