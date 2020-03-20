@@ -1,17 +1,21 @@
 import * as Redux from 'redux';
 
 import rootReducer from './rootReducer';
-//import * as screens from './../const/screens';
+import { ClientDetails } from '../types/ClientDetails';
+import { Contact } from '../types/Contact';
+import { Screen } from '../enums/Screen';
 
-
-
-
-const defaultState = {
-    clientDetails: {},
-    activeScreen: null,//screens.SPLASH,
-    activeContact: null
+export type State = {
+  activeScreen: Screen;
+  clientDetails: ClientDetails;
+  activeContact: Contact;
 };
 
+const defaultState: State = {
+  activeScreen: Screen.SPLASH,
+  clientDetails: null,
+  activeContact: null
+};
 
 // apply redux extension for chrome only
 const isChrome = !!window['chrome'] && (!!window['chrome'].webstore || !!window['chrome'].runtime);

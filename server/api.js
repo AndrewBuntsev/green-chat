@@ -4,6 +4,7 @@ const dbClient = require('./dbClient');
 
 const testApi = app => {
     app.get('/api/test', (req, res) => {
+        console.log('Accepted request');
         res.status(200);
         res.json({ status: statusCodes.SUCCESS, message: '', payload: { hey: 'hello' } });
     });

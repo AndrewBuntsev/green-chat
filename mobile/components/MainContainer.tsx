@@ -1,30 +1,77 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { connect } from 'react-redux';
-import ContactList from './ContactList';
-import ChatList from './ChatList';
-import Settings from './Settings';
+import { Dispatch } from 'redux';
+import * as Device from 'expo-device';
 
-const Tab = createMaterialTopTabNavigator();
+import * as api from '../api';
+import * as store from '../redux/store';
+import Splash from './Splash';
+import { Screen } from '../enums/Screen';
+import SignUp from './SignUp';
+import { Response } from '../types/Response';
+import { ResponseStatus } from '../enums/ResponseStatus';
+import { Action } from '../redux/Action';
+import dispatchCombinedAction from '../redux/actions/dispatchCombinedAction';
+import setClientDetails from '../redux/actions/setClientDetails';
+import setActiveScreen from '../redux/actions/setActiveScreen';
+import { ClientDetails } from '../types/ClientDetails';
+import TabNavigator from './TabNavigator';
+import getTypeFromObject from '../helpers/getTypeFromObject';
 
-type Props = {};
-type State = {};
+
+type Props = {
+  activeScreen: Screen;
+  clientDetails: ClientDetails;
+  setActiveScreen(activeScreen: Screen): void;
+  dispatchCombinedAction(actions: Array<Action>): void;
+};
+
+type State = {
+
+};
 
 class MainContainer extends React.Component<Props, State> {
+
+  async componentDidMount() {
+    const response: Response = await api.getClient(Device.osInternalBuildId);
+    if (response && response.status == ResponseStatus.SUCCESS) {
+      if (response.payload) {
+        this.props.dispatchCombinedAction([setClientDetails(getTypeFromObject<ClientDetails>(response.payload)), setActiveScreen(Screen.MAIN)]);
+      } else {
+        this.props.setActiveScreen(Screen.SIGNUP);
+      }
+      return;
+    }
+    console.warn(response)
+  }
+
+  getActiveComponent = (): JSX.Element => {
+    switch (this.props.activeScreen) {
+      case Screen.SPLASH:
+        return <View style={styles.splashScreen}>
+          <Splash />
+        </View>;
+      case Screen.MAIN:
+        return <View style={styles.tabNavigator}>
+          <TabNavigator />
+        </View>;
+      case Screen.SIGNUP:
+        return <SignUp clientId={Device.osInternalBuildId ? Device.osInternalBuildId : 'guest123'} />;
+
+      default:
+        return <View><Text>Cannot find the active screen</Text></View>;
+    }
+  };
+
   render() {
     return (
-
-      <Tab.Navigator initialRouteName="Contacts"
-        tabBarOptions={{
-          activeTintColor: '#e91e63',
-          labelStyle: { fontSize: 12 },
-          style: { backgroundColor: 'powderblue' },
-        }}>
-        <Tab.Screen name='Contacts' component={ContactList} options={{ tabBarLabel: 'Contacts' }}></Tab.Screen>
-        <Tab.Screen name='Chats' component={ChatList} options={{ tabBarLabel: 'Chats' }}></Tab.Screen>
-        <Tab.Screen name='Settings' component={Settings} options={{ tabBarLabel: 'Settings' }}></Tab.Screen>
-      </Tab.Navigator>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text>Greeeeen Chat</Text>
+        </View>
+        {this.getActiveComponent()}
+      </View>
     );
   }
 }
@@ -32,11 +79,35 @@ class MainContainer extends React.Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-evenly',
+    width: '100%'
   },
+  splashScreen: {
+    flex: 5,
+    justifyContent: 'center'
+  },
+  header: {
+    height: 30
+  },
+  tabNavigator: {
+    flex: 5,
+    width: '100%'
+  }
 });
 
 
-export default connect(null, null)(MainContainer);
+const mapStateToProps = (state: store.State): object => ({
+  activeScreen: state.activeScreen,
+  clientDetails: state.clientDetails
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  dispatchCombinedAction: (actions: Array<Action>) => dispatch(dispatchCombinedAction(actions)),
+  setActiveScreen: (activeScreen: Screen) => dispatch(setActiveScreen(activeScreen))
+  //setClientDetails: clientDetails => dispatch(setClientDetails(clientDetails))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainContainer);
