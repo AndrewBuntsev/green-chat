@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import store from './redux/store';
 import MainContainer from './components/MainContainer';
-import SearchClient from './components/SearchClient';
+import SearchClient from './components/contactsScreen/SearchClient';
 
 
 //const Stack = createStackNavigator();

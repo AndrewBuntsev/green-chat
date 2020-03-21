@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import ContactList from './ContactList';
 import SearchClient from './SearchClient';
+import Messages from '../chatsScreen/Messages';
 
 
 const Stack = createStackNavigator();

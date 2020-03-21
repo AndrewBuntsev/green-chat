@@ -3,15 +3,15 @@ import { StyleSheet, Text, View, TextInput, Button, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import * as api from '../api';
-import * as store from '../redux/store';
-import { Response } from '../types/Response';
-import { ResponseStatus } from '../enums/ResponseStatus';
-import { Contact } from '../types/Contact';
-import getTypeFromObject from '../helpers/getTypeFromObject';
+import * as api from '../../api';
+import * as store from '../../redux/store';
+import { Response } from '../../types/Response';
+import { ResponseStatus } from '../../enums/ResponseStatus';
+import { Contact } from '../../types/Contact';
+import getTypeFromObject from '../../helpers/getTypeFromObject';
 import SearchClientResults from './SearchClientResults';
-import setClientDetails from '../redux/actions/setClientDetails';
-import { ClientDetails } from '../types/ClientDetails';
+import setClientDetails from '../../redux/actions/setClientDetails';
+import { ClientDetails } from '../../types/ClientDetails';
 
 
 type Props = {
@@ -76,7 +76,7 @@ class SearchClient extends React.Component<Props, State>{
                 <Button onPress={this.props.navigation.goBack} title='Cancel' />
             </View>
             <View>
-                {this.state.searchInProgress && <Image source={require('../assets/spinner.gif')} width={50}></Image>}
+                {this.state.searchInProgress && <Image source={require('../../assets/spinner.gif')} width={50}></Image>}
                 {this.state.searchPerformed && <SearchClientResults clients={this.state.clients} addContact={this.addContact} />}
             </View>
         </View>;

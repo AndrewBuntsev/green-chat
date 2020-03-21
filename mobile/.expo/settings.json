@@ -1,7 +1,8 @@
 {
-  "hostType": "tunnel",
+  "hostType": "localhost",
   "lanType": "ip",
   "dev": true,
   "minify": false,
-  "urlRandomness": "7d-wii"
+  "urlRandomness": "7d-wii",
+  "https": false
 }

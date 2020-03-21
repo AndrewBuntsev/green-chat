@@ -9,8 +9,8 @@ import * as Device from 'expo-device';
 
 import * as api from '../api';
 import * as store from '../redux/store';
-import ContactsScreen from './ContactsScreen';
-import ChatList from './ChatList';
+import ContactsScreen from './contactsScreen/ContactsScreen';
+import ChatList from './chatsScreen/ChatList';
 import Settings from './Settings';
 import Splash from './Splash';
 import { Screen } from '../enums/Screen';
@@ -23,14 +23,18 @@ import setClientDetails from '../redux/actions/setClientDetails';
 import setActiveScreen from '../redux/actions/setActiveScreen';
 import { ClientDetails } from '../types/ClientDetails';
 import getTypeFromObject from '../helpers/getTypeFromObject';
+import ChatsScreen from './chatsScreen/ChatsScreen';
+import { Contact } from '../types/Contact';
+import setActiveContact from '../redux/actions/setActiveContact';
 
 //const Tab = createBottomTabNavigator();
 const Tab = createMaterialTopTabNavigator();
 
 type Props = {
   clientDetails: ClientDetails;
+  activeContact: Contact;
   setClientDetails(clientDetails: ClientDetails): void;
-  // dispatchCombinedAction(actions: Array<Action>): void;
+  dispatchCombinedAction(actions: Array<Action>): void;
 };
 
 type State = {
@@ -43,33 +47,20 @@ class TabNavigator extends React.Component<Props, State> {
 
   async componentDidMount() {
     this.refreshTimer = setInterval(this.reloadClientDetails, 4000);
-    // const response: Response = await api.getClient(Device.osInternalBuildId);
-    // if (response && response.status == ResponseStatus.SUCCESS) {
-    //   if (response.payload) {
-    //     this.props.dispatchCombinedAction([setClientDetails(getClientDetailsFromObject(response.payload)), setActiveScreen(Screen.MAIN)]);
-    //   } else {
-    //     this.props.setActiveScreen(Screen.SIGNUP);
-    //   }
-    //   return;
-    // }
-    // console.warn(response)
   }
 
   reloadClientDetails = async () => {
     const response: Response = await api.getClient(this.props.clientDetails.clientId);
     if (response && response.status == ResponseStatus.SUCCESS && response.payload) {
-      this.refreshClientScreen(getTypeFromObject<ClientDetails>(response.payload));
+      const clientDetails = getTypeFromObject<ClientDetails>(response.payload);
+      // refresh clientDetails & activeContact
+      const activeContact = (clientDetails.contacts && this.props.activeContact)
+        ? clientDetails.contacts.find(c => c.clientId == this.props.activeContact.clientId)
+        : null;
+      this.props.dispatchCombinedAction([setClientDetails(clientDetails), setActiveContact(activeContact)]);
     }
   };
 
-  refreshClientScreen = (clientDetails: ClientDetails) => {
-    this.props.setClientDetails(clientDetails);
-    // refresh clientDetails & activeContact
-    // const activeContact = (clientDetails.contacts && this.props.activeContact)
-    //     ? clientDetails.contacts.find(c => c.clientId == this.props.activeContact.clientId)
-    //     : null;
-    // this.props.dispatchCombinedAction([setClientDetails(clientDetails), setActiveContact(activeContact)]);
-  };
 
 
 
@@ -78,7 +69,7 @@ class TabNavigator extends React.Component<Props, State> {
     return (
       <Tab.Navigator>
         <Tab.Screen name="Contacts" component={ContactsScreen} />
-        <Tab.Screen name="Chats" component={ChatList} />
+        <Tab.Screen name="Chats" component={ChatsScreen} />
         <Tab.Screen name="Settings" component={Settings} />
       </Tab.Navigator>
     );
@@ -95,11 +86,12 @@ const styles = StyleSheet.create({
 
 
 const mapStateToProps = (state: store.State): object => ({
-  clientDetails: state.clientDetails
+  clientDetails: state.clientDetails,
+  activeContact: state.activeContact
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  //dispatchCombinedAction: (actions: Array<Action>) => dispatch(dispatchCombinedAction(actions)),
+  dispatchCombinedAction: (actions: Array<Action>) => dispatch(dispatchCombinedAction(actions)),
   setClientDetails: clientDetails => dispatch(setClientDetails(clientDetails))
 });
 

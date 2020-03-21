@@ -1,40 +1,40 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View, Text, FlatList, Button } from 'react-native';
-import { Constants } from 'expo';
 
 
-import * as api from '../api';
+import * as api from '../../api';
 import ContactListItem from './ContactListItem';
-import { Contact } from '../types/Contact';
-import * as store from '../redux/store';
+import * as store from '../../redux/store';
 import { Dispatch } from 'redux';
-import { ClientDetails } from '../types/ClientDetails';
-import { ResponseStatus } from '../enums/ResponseStatus';
-import { Response } from '../types/Response';
-import setClientDetails from '../redux/actions/setClientDetails';
-import getTypeFromObject from '../helpers/getTypeFromObject';
+import { ClientDetails } from '../../types/ClientDetails';
+import { ResponseStatus } from '../../enums/ResponseStatus';
+import { Response } from '../../types/Response';
+import setClientDetails from '../../redux/actions/setClientDetails';
+import getTypeFromObject from '../../helpers/getTypeFromObject';
+import { Contact } from '../../types/Contact';
+import setActiveContact from '../../redux/actions/setActiveContact';
 
 
 type Props = {
+  navigation: any;
   clientDetails: ClientDetails;
   setClientDetails(clientDetails: ClientDetails): void;
-  navigation: any;
+  setActiveContact(activeContact: Contact): void;
 };
 
 type State = {
-  //contacts: Array<Contact>;
 };
 
 class ContactList extends React.Component<Props, State> {
-  //state = { contacts: [] };
-
-  async componentDidMount() {
-
-  }
 
   onAddContactClick = () => {
-    this.props.navigation.navigate('SearchContact', { name: 'John' });
+    this.props.navigation.navigate('SearchContact');
+  };
+
+  selectContact = async (contact: Contact) => {
+    this.props.setActiveContact(contact);
+    this.props.navigation.navigate('Chats');
   };
 
   removeContact = async (contactId: string) => {
@@ -46,7 +46,11 @@ class ContactList extends React.Component<Props, State> {
 
   render() {
     const renderItem = ({ item }) => {
-      return <ContactListItem contact={item} removeContact={this.removeContact} key={item.clientId} />;
+      return <ContactListItem
+        contact={item}
+        selectContact={this.selectContact}
+        removeContact={this.removeContact}
+        key={item.clientId} />;
     };
 
     const contacts = this.props.clientDetails.contacts;
@@ -81,8 +85,8 @@ const mapStateToProps = (state: store.State): object => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  //dispatchCombinedAction: (actions: Array<Action>) => dispatch(dispatchCombinedAction(actions)),
-  setClientDetails: (clientDetails: ClientDetails) => dispatch(setClientDetails(clientDetails))
+  setClientDetails: (clientDetails: ClientDetails) => dispatch(setClientDetails(clientDetails)),
+  setActiveContact: (activeContact: Contact) => dispatch(setActiveContact(activeContact))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactList);

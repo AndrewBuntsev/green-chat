@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { Contact } from '../types/Contact';
+import { Contact } from '../../types/Contact';
 
 
 type Props = {
