@@ -130,9 +130,10 @@ exports.sendMessage = async options => {
     const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
     const db = mongoClient.db(MONGO_DB_NAME);
 
-    //TODO: try Promise.all
-    await addMessage(db, senderId, receiverId, 'out', message);
-    await addMessage(db, receiverId, senderId, 'in', message);
+    await Promise.all([
+        addMessage(db, senderId, receiverId, 'out', message),
+        addMessage(db, receiverId, senderId, 'in', message)
+    ]);
 
     mongoClient.close();
 };
@@ -143,7 +144,7 @@ exports.sendMessage = async options => {
 
 // ----------------------------------private functions-------------------------
 
-addContactIfNotExists = async (db, clientId, contactId, contactName) => {
+const addContactIfNotExists = async (db, clientId, contactId, contactName) => {
     // if the contact already exists, do nothing
     const exists = await db.collection('clients').find({ clientId: clientId, 'contacts.clientId': contactId }).limit(1).count();
     if (exists) return;
@@ -166,7 +167,7 @@ addContactIfNotExists = async (db, clientId, contactId, contactName) => {
 };
 
 
-addMessage = async (db, clientId, contactId, type, msg) => {
+const addMessage = async (db, clientId, contactId, type, msg) => {
     // add contact if it doesn't exist
     await addContactIfNotExists(db, clientId, contactId, null);
 
@@ -176,7 +177,7 @@ addMessage = async (db, clientId, contactId, type, msg) => {
         {
             $push:
             {
-                'contacts.$.messages': { type, msg }
+                'contacts.$.messages': { type, msg, time: new Date() }
             }
         });
 };
