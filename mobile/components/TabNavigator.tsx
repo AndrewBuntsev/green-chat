@@ -11,7 +11,6 @@ import * as api from '../api';
 import * as store from '../redux/store';
 import ContactsScreen from './contactsScreen/ContactsScreen';
 import ChatList from './chatsScreen/ChatList';
-import Settings from './Settings';
 import Splash from './Splash';
 import { Screen } from '../enums/Screen';
 import SignUp from './SignUp';
@@ -26,6 +25,7 @@ import getTypeFromObject from '../helpers/getTypeFromObject';
 import ChatsScreen from './chatsScreen/ChatsScreen';
 import { Contact } from '../types/Contact';
 import setActiveContact from '../redux/actions/setActiveContact';
+import SettingsScreen from './settingsScreen/SettingsScreen';
 
 //const Tab = createBottomTabNavigator();
 const Tab = createMaterialTopTabNavigator();
@@ -70,7 +70,7 @@ class TabNavigator extends React.Component<Props, State> {
       <Tab.Navigator>
         <Tab.Screen name="Contacts" component={ContactsScreen} />
         <Tab.Screen name="Chats" component={ChatsScreen} />
-        <Tab.Screen name="Settings" component={Settings} />
+        <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
     );
   }
