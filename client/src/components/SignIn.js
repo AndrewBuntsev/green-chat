@@ -21,11 +21,13 @@ class SignIn extends Component {
     //TODO: Login failure
     onLoginClick = async () => {
         if (this.state.clientId) {
-            const response = await api.getClient(this.state.clientId);
-            console.log(response);
+            let response = await api.getClient(this.state.clientId);
             if (response && response.status == responseStatus.SUCCESS && response.payload) {
-                this.props.dispatchCombinedAction([setClientDetails(response.payload), setActiveScreen(screens.MAIN)]);
-                return;
+                const { clientId, clientName, showNotifications, gender } = response.payload;
+                response = await api.updateClient({ clientId, clientName, showNotifications, gender, status: 'on' });
+                if (response && response.status == responseStatus.SUCCESS && response.payload) {
+                    this.props.dispatchCombinedAction([setClientDetails(response.payload), setActiveScreen(screens.MAIN)]);
+                }
             }
         }
     };

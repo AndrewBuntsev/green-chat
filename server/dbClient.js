@@ -4,13 +4,29 @@ const MONGO_URI = `mongodb://localhost:27017/${MONGO_DB_NAME}`;
 const MongoClient = require('mongodb').MongoClient;
 const MONGO_CLIENT_OPTIONS = { useUnifiedTopology: true, useNewUrlParser: true };
 
-//Refresh all the users data every ... sec
+
+// refresh all the clients data every ... sec
 setInterval(refreshClientsData, 5000);
+
+
+// refresh all the clients online status
+let onlineClients = [];
+setInterval(refreshOnlineClients, 10000);
+
+
 
 exports.getClient = async options => {
     const { clientId } = options;
     if (!clientId) {
         throw 'ClientId parameter is not provided';
+    }
+
+    // update online clients collection
+    const onlineClient = onlineClients.find(c => c.id == clientId);
+    if (onlineClient) {
+        onlineClient.time = new Date();
+    } else {
+        onlineClients.push({ id: clientId, time: new Date() });
     }
 
     const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
@@ -95,7 +111,7 @@ exports.addContact = async options => {
         throw `Cannot add the contact to non-existent client.`;
     }
 
-    await addContactIfNotExists(db, clientId, contact.clientId, contact.clientName);
+    await addContactIfNotExists(db, clientId, contact.clientId);
 
     mongoClient.close();
 };
@@ -132,8 +148,8 @@ exports.searchClients = async options => {
 
     const searchRegex = new RegExp(searchTerm);
     const results = await Promise.all([
-        db.collection('clients').find({ clientId: searchRegex }).project({ clientId: 1, clientName: 1 }).toArray(),
-        db.collection('clients').find({ clientName: searchRegex }).project({ clientId: 1, clientName: 1 }).toArray()]);
+        db.collection('clients').find({ clientId: searchRegex }).project({ clientId: 1, clientName: 1, gender: 1, status: 1 }).toArray(),
+        db.collection('clients').find({ clientName: searchRegex }).project({ clientId: 1, clientName: 1, gender: 1, status: 1 }).toArray()]);
 
     mongoClient.close();
     // return list of unique clients (unique by clientId)
@@ -171,16 +187,12 @@ exports.sendMessage = async options => {
 
 // ----------------------------------private functions-------------------------
 
-const addContactIfNotExists = async (db, clientId, contactId, contactName) => {
+const addContactIfNotExists = async (db, clientId, contactId) => {
     // if the contact already exists, do nothing
     const exists = await db.collection('clients').find({ clientId: clientId, 'contacts.clientId': contactId }).limit(1).count();
     if (exists) return;
 
-    // if no name provide it, retrieve it
-    if (!contactName) {
-        const contact = await db.collection('clients').find({ clientId: contactId }).limit(1).project({ clientId: 1, clientName: 1, _id: 0 }).next();
-        contactName = contact.clientName;
-    }
+    const contact = await db.collection('clients').find({ clientId: contactId }).limit(1).project({ clientId: 1, clientName: 1, gender: 1, status: 1, _id: 0 }).next();
 
     // create the contact
     await db.collection('clients').updateOne(
@@ -188,7 +200,7 @@ const addContactIfNotExists = async (db, clientId, contactId, contactName) => {
         {
             $push:
             {
-                'contacts': { clientId: contactId, clientName: contactName }
+                'contacts': { clientId: contact.clientId, clientName: contact.clientName, gender: contact.gender, status: contact.status }
             }
         });
 };
@@ -196,7 +208,7 @@ const addContactIfNotExists = async (db, clientId, contactId, contactName) => {
 
 const addMessage = async (db, clientId, contactId, type, msg) => {
     // add contact if it doesn't exist
-    await addContactIfNotExists(db, clientId, contactId, null);
+    await addContactIfNotExists(db, clientId, contactId);
 
     // add the message
     await db.collection('clients').updateOne(
@@ -234,4 +246,43 @@ async function refreshClientsData() {
         ))));
 
     mongoClient.close();
-};
+}
+
+async function refreshOnlineClients() {
+
+    const time = new Date();
+    onlineClients = onlineClients.filter(c => c.time.getTime() > time.getTime() - 10000);
+
+    //console.log(onlineClients);
+
+    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
+    const db = mongoClient.db(MONGO_DB_NAME);
+
+    await db.collection('clients').updateMany(
+        {
+            //status: { $nin: ['off', 'inv'] },
+            clientId: { $nin: onlineClients.map(c => c.id) }
+        },
+        {
+            $set:
+            {
+                status: 'off',
+                isRefreshRequired: true
+            }
+        }
+    )
+    // await Promise.all(offlineClients.map(c => db.collection('clients').updateOne({ clientId: c.clientId },
+    //     {
+    //         $set:
+    //         {
+    //             status: 'off',
+    //             isRefreshRequired: true
+    //         }
+    //     }
+    // )));
+
+    mongoClient.close();
+
+
+
+}

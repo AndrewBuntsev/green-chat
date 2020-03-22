@@ -40,8 +40,12 @@ export default class ContactListItem extends Component {
   }
 
   render() {
+    let status = this.props.contact.status;
+    if (status == 'inv') status = 'off';
+
     return (
       <div style={styles.container}>
+        <img src={require(`./../../assets/${status}.png`)} width={20} />
         <span onClick={this.onContactClick}>
           {`${this.props.contact.clientName}  `}
           {this.state.hasNewMessages && this.props.activeContact != this.props.contact && <img src={require('./../../assets/envelope.png')} width={20} style={styles.envelope}></img>}
