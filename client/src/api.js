@@ -16,6 +16,14 @@ export const addClient = (clientDetails) => {
     }).then(res => res.json());
 };
 
+export const updateClient = (clientDetails) => {
+    return fetch(`${ENDPOINT}/api/updateClient`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(clientDetails)
+    }).then(res => res.json());
+};
+
 export const addContact = (clientId, contact) => {
     return fetch(`${ENDPOINT}/api/addContact`, {
         method: 'POST',

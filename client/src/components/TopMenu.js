@@ -21,11 +21,16 @@ class TopMenu extends Component {
         this.props.dispatchCombinedAction([setClientDetails(null), setActiveScreen(screens.SIGNIN)], setActiveContact(null));
     };
 
+    showSettings = () => {
+        this.props.setActiveScreen(screens.SETTINGS);
+    };
+
     render() {
         return <div style={styles.container}>
             <div>
                 {`Hello, ${this.props.clientDetails.clientName}! `}
                 <button onClick={this.logOut}>Log Out</button>
+                <button onClick={this.showSettings}>Settings</button>
             </div>
             <div>{`Your ID is: ${this.props.clientDetails.clientId}!`}</div>
         </div>;

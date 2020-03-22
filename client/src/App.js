@@ -9,11 +9,11 @@ import Splash from './components/Splash';
 import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import MainContainer from './components/MainContainer';
-import delay from './helpers/delay';
 import * as cookiesHelper from './helpers/cookiesHelper';
 import setActiveScreen from './redux/actions/setActiveScreen';
 import setClientDetails from './redux/actions/setClientDetails';
 import dispatchCombinedAction from './redux/actions/dispatchCombinedAction';
+import SettingsScreen from './components/SettingsScreen';
 
 
 //TODO: TypeScript
@@ -22,8 +22,6 @@ class App extends React.Component {
 
   //TODO: add cookie manager
   async componentDidMount() {
-
-    //await delay(1000);
 
     // try to get saved client ID
     const clientId = cookiesHelper.getClietnId();
@@ -46,6 +44,7 @@ class App extends React.Component {
         {this.props.activeScreen == screens.SIGNIN && <SignIn />}
         {this.props.activeScreen == screens.SIGNUP && <SignUp />}
         {this.props.activeScreen == screens.MAIN && <MainContainer />}
+        {this.props.activeScreen == screens.SETTINGS && <SettingsScreen />}
       </div>
     );
   }

@@ -4,6 +4,8 @@ const MONGO_URI = `mongodb://localhost:27017/${MONGO_DB_NAME}`;
 const MongoClient = require('mongodb').MongoClient;
 const MONGO_CLIENT_OPTIONS = { useUnifiedTopology: true, useNewUrlParser: true };
 
+//Refresh all the users data every ... sec
+setInterval(refreshClientsData, 5000);
 
 exports.getClient = async options => {
     const { clientId } = options;
@@ -50,7 +52,32 @@ exports.addClient = async options => {
         throw `Cannot create a new client. The client ID ${clientId} already exists in the database`;
     }
 
-    await db.collection('clients').insertOne({ clientId, clientName });
+    await db.collection('clients').insertOne({ clientId, clientName, showNotifications: true, gender: '', status: 'on' });
+    mongoClient.close();
+};
+
+exports.updateClient = async options => {
+    const { clientId, clientName, showNotifications, gender, status } = options;
+    if (!clientId) {
+        throw `Cannot update the client. The clientId parameter is mandatory.`;
+    }
+    if (!clientName) {
+        throw `Cannot update the client. The clientName parameter is mandatory. Client ID: ${clientId}`;
+    }
+
+    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
+    const db = mongoClient.db(MONGO_DB_NAME);
+
+    const exists = await db.collection('clients').find({ clientId: clientId }).limit(1).count();
+    if (!exists) {
+        throw `Cannot update the client. The client ID ${clientId} does not exist in the database`;
+    }
+
+    await db.collection('clients').updateOne({ clientId: clientId },
+        {
+            $set: { clientName, showNotifications, gender, status, isRefreshRequired: true }
+        });
+
     mongoClient.close();
 };
 
@@ -180,4 +207,31 @@ const addMessage = async (db, clientId, contactId, type, msg) => {
                 'contacts.$.messages': { type, msg, time: new Date() }
             }
         });
+};
+
+
+async function refreshClientsData() {
+    const mongoClient = await MongoClient.connect(MONGO_URI, MONGO_CLIENT_OPTIONS);
+    const db = mongoClient.db(MONGO_DB_NAME);
+
+    const clientsToRefresh = await db.collection('clients')
+        .find({ isRefreshRequired: true })
+        .toArray();
+
+    await Promise.all(clientsToRefresh.map(client => db.collection('clients').updateOne({ clientId: client.clientId }, { $set: { isRefreshRequired: false } })));
+    await Promise.all(clientsToRefresh.map(client =>
+        Promise.all(client.contacts.map(contact =>
+            db.collection('clients').updateOne(
+                { clientId: contact.clientId, 'contacts.clientId': client.clientId },
+                {
+                    $set:
+                    {
+                        'contacts.$.clientName': client.clientName,
+                        'contacts.$.gender': client.gender,
+                        'contacts.$.status': client.status
+                    }
+                })
+        ))));
+
+    mongoClient.close();
 };

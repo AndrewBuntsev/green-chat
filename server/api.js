@@ -61,6 +61,22 @@ const addClient = app => {
     });
 };
 
+const updateClient = app => {
+    app.post('/api/updateClient', async (req, res) => {
+        const { clientId, clientName, showNotifications, gender, status } = req.body;
+        try {
+            await dbClient.updateClient({ clientId, clientName, showNotifications, gender, status });
+            const client = await dbClient.getClient({ clientId: clientId });
+            res.json({ status: statusCodes.SUCCESS, message: '', payload: client });
+        }
+        catch (err) {
+            res.status(500);
+            console.error(err);
+            res.json({ status: statusCodes.ERROR, message: err, payload: null });
+        }
+    });
+};
+
 const addContact = app => {
     app.post('/api/addContact', async (req, res) => {
         const { clientId, contact } = req.body;
@@ -133,6 +149,7 @@ module.exports = app => {
     testDB(app);
     getClient(app);
     addClient(app);
+    updateClient(app);
     addContact(app);
     removeContact(app);
     searchClients(app);
