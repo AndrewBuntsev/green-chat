@@ -34,16 +34,19 @@ type State = {
 class MainContainer extends React.Component<Props, State> {
 
   async componentDidMount() {
-    const response: Response = await api.getClient(Device.osInternalBuildId);
+    let response: Response = await api.getClient(Device.osInternalBuildId);
     if (response && response.status == ResponseStatus.SUCCESS) {
       if (response.payload) {
-        this.props.dispatchCombinedAction([setClientDetails(getTypeFromObject<ClientDetails>(response.payload)), setActiveScreen(Screen.MAIN)]);
+        const { clientId, clientName, showNotifications, gender } = getTypeFromObject<ClientDetails>(response.payload);
+        response = await api.updateClient({ clientId, clientName, showNotifications, gender, status: 'on' });
+        if (response && response.status == ResponseStatus.SUCCESS && response.payload) {
+          this.props.dispatchCombinedAction([setClientDetails(getTypeFromObject<ClientDetails>(response.payload)), setActiveScreen(Screen.MAIN)]);
+        }
       } else {
         this.props.setActiveScreen(Screen.SIGNUP);
       }
       return;
     }
-    console.warn(response)
   }
 
   getActiveComponent = (): JSX.Element => {

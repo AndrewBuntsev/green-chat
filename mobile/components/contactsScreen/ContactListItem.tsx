@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableHighlight, Button } from 'react-native';
+import { StyleSheet, View, Text, TouchableHighlight, Button, Image } from 'react-native';
 import { Contact } from '../../types/Contact';
+import { ClientStatus } from '../../enums/ClientStatus';
+
 
 type Props = {
   contact: Contact;
@@ -30,10 +32,16 @@ export default class ContactListItem extends React.Component<Props, State> {
   // }
 
   render() {
+
+
     return (
+
+
+
       <View style={styles.container}>
         <TouchableHighlight onPress={this.onContactClick}>
           <View>
+            <Image source={getStatusImage(this.props.contact.status)} style={styles.statusImage} />
             <Text style={styles.contactName}>
               {this.props.contact.clientName}
             </Text>
@@ -43,16 +51,40 @@ export default class ContactListItem extends React.Component<Props, State> {
       </View>
     );
   }
+
+
+
+
+}
+
+function getStatusImage(status: ClientStatus): any {
+  switch (status) {
+    case ClientStatus.ONLINE:
+      return require('./../../assets/on.png');
+    case ClientStatus.OFFLINE:
+      return require('./../../assets/off.png');
+    case ClientStatus.AWAY:
+      return require('./../../assets/away.png');
+    case ClientStatus.INVISIBLE:
+      return require('./../../assets/off.png');
+    default:
+      return null;
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    flexDirection: 'row'
   },
   contactName: {
-    flex: 1,
-    padding: 10,
+    width: 100,
+    //padding: 10,
     fontSize: 18,
     height: 44
+  },
+  statusImage: {
+    width: 20,
+    height: 20
   }
 });
