@@ -18,6 +18,7 @@ import setActiveScreen from '../redux/actions/setActiveScreen';
 import { ClientDetails } from '../types/ClientDetails';
 import TabNavigator from './TabNavigator';
 import getTypeFromObject from '../helpers/getTypeFromObject';
+import Header from './Header';
 
 
 type Props = {
@@ -27,14 +28,14 @@ type Props = {
   dispatchCombinedAction(actions: Array<Action>): void;
 };
 
-type State = {
-
-};
+type State = {};
 
 class MainContainer extends React.Component<Props, State> {
 
   async componentDidMount() {
     let response: Response = await api.getClient(Device.osInternalBuildId);
+
+    console.log(response);
     if (response && response.status == ResponseStatus.SUCCESS) {
       if (response.payload) {
         const { clientId, clientName, showNotifications, gender } = getTypeFromObject<ClientDetails>(response.payload);
@@ -45,6 +46,7 @@ class MainContainer extends React.Component<Props, State> {
       } else {
         this.props.setActiveScreen(Screen.SIGNUP);
       }
+
       return;
     }
   }
@@ -57,6 +59,9 @@ class MainContainer extends React.Component<Props, State> {
         </View>;
       case Screen.MAIN:
         return <View style={styles.tabNavigator}>
+          <View style={styles.header}>
+            <Header />
+          </View>
           <TabNavigator />
         </View>;
       case Screen.SIGNUP:
@@ -68,11 +73,9 @@ class MainContainer extends React.Component<Props, State> {
   };
 
   render() {
+
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text>Greeeeen Chat</Text>
-        </View>
         {this.getActiveComponent()}
       </View>
     );
@@ -83,20 +86,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     width: '100%'
   },
   splashScreen: {
-    flex: 5,
+    flex: 1,
     justifyContent: 'center'
   },
   header: {
-    height: 30
+    backgroundColor: '#B1D8B7',
+    height: 70
   },
   tabNavigator: {
-    flex: 5,
+    flex: 1,
     width: '100%'
   }
 });
@@ -110,7 +113,6 @@ const mapStateToProps = (state: store.State): object => ({
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   dispatchCombinedAction: (actions: Array<Action>) => dispatch(dispatchCombinedAction(actions)),
   setActiveScreen: (activeScreen: Screen) => dispatch(setActiveScreen(activeScreen))
-  //setClientDetails: clientDetails => dispatch(setClientDetails(clientDetails))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainContainer);

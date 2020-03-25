@@ -1,11 +1,14 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableHighlight, Button, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableHighlight, Button, Image, Alert } from 'react-native';
 import { Contact } from '../../types/Contact';
-import { ClientStatus } from '../../enums/ClientStatus';
+import { getStatusImage } from '../../helpers/getStatusImage';
+import ContactListItemMenu from './ContactListItemMenu';
 
 
 type Props = {
   contact: Contact;
+  isHighlighted: boolean;
+  isHighlightedChange(contactId: string): void;
   removeContact(clientId: string): void;
   selectContact(contact: Contact): void;
 };
@@ -24,67 +27,63 @@ export default class ContactListItem extends React.Component<Props, State> {
     this.props.selectContact(this.props.contact);
   };
 
-  // static getDerivedStateFromProps(nextProps, prevState) {
-  //   if (nextProps.contact.messages && nextProps.contact.messages.length > prevState.messagesNumber) {
-  //     return { hasNewMessages: true, messagesNumber: nextProps.contact.messages.length };
-  //   }
-  //   return null;
-  // }
+  onContactLongClick = () => {
+    this.props.isHighlightedChange(this.props.contact.clientId);
+  };
+
+  deleteContact = () => {
+    Alert.alert('Delete Contact', `Are you sure you want to delete '${this.props.contact.clientName}'?`, [
+      { text: 'Yes', onPress: () => this.props.removeContact(this.props.contact.clientId) },
+      { text: 'Cancel', onPress: () => { }, style: 'cancel' }
+    ],
+      { cancelable: true });
+  };
+
 
   render() {
-
-
     return (
-
-
-
-      <View style={styles.container}>
-        <TouchableHighlight onPress={this.onContactClick}>
-          <View>
+      <View>
+        <TouchableHighlight onLongPress={this.onContactLongClick} onPress={this.onContactClick}>
+          <View style={this.props.isHighlighted ? { ...styles.container, ...styles.containerExtendedMode } : styles.container}>
             <Image source={getStatusImage(this.props.contact.status)} style={styles.statusImage} />
             <Text style={styles.contactName}>
               {this.props.contact.clientName}
             </Text>
-            <Button title='X' onPress={() => this.props.removeContact(this.props.contact.clientId)} />
+            <View></View>
+            {this.props.isHighlighted && <ContactListItemMenu deleteButtonClick={this.deleteContact} cancelButtonClick={this.onContactLongClick} />}
           </View>
         </TouchableHighlight>
       </View>
     );
   }
-
-
-
-
 }
 
-function getStatusImage(status: ClientStatus): any {
-  switch (status) {
-    case ClientStatus.ONLINE:
-      return require('./../../assets/on.png');
-    case ClientStatus.OFFLINE:
-      return require('./../../assets/off.png');
-    case ClientStatus.AWAY:
-      return require('./../../assets/away.png');
-    case ClientStatus.INVISIBLE:
-      return require('./../../assets/off.png');
-    default:
-      return null;
-  }
-}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    height: 55,
+    alignContent: 'center',
+    backgroundColor: '#D2FBA4'
   },
-  contactName: {
-    width: 100,
-    //padding: 10,
-    fontSize: 18,
-    height: 44
+  containerExtendedMode: {
+    backgroundColor: '#B1D8B7'
   },
   statusImage: {
+    alignSelf: 'center',
     width: 20,
     height: 20
+  },
+  contactName: {
+    alignSelf: 'center',
+    flex: 1,
+    fontSize: 18,
+
+    marginStart: 5,
+    marginVertical: -3
+  },
+  buttonDelete: {
+    flex: 1
   }
 });

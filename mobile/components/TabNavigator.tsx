@@ -1,25 +1,17 @@
-//https://reactnative.dev/docs/using-a-listview
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-//import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import * as Device from 'expo-device';
 
 import * as api from '../api';
 import * as store from '../redux/store';
 import ContactsScreen from './contactsScreen/ContactsScreen';
-import ChatList from './chatsScreen/ChatList';
-import Splash from './Splash';
-import { Screen } from '../enums/Screen';
-import SignUp from './SignUp';
 import { Response } from '../types/Response';
 import { ResponseStatus } from '../enums/ResponseStatus';
 import { Action } from '../redux/Action';
 import dispatchCombinedAction from '../redux/actions/dispatchCombinedAction';
 import setClientDetails from '../redux/actions/setClientDetails';
-import setActiveScreen from '../redux/actions/setActiveScreen';
 import { ClientDetails } from '../types/ClientDetails';
 import getTypeFromObject from '../helpers/getTypeFromObject';
 import ChatsScreen from './chatsScreen/ChatsScreen';
@@ -27,7 +19,6 @@ import { Contact } from '../types/Contact';
 import setActiveContact from '../redux/actions/setActiveContact';
 import SettingsScreen from './settingsScreen/SettingsScreen';
 
-//const Tab = createBottomTabNavigator();
 const Tab = createMaterialTopTabNavigator();
 
 type Props = {
@@ -61,13 +52,9 @@ class TabNavigator extends React.Component<Props, State> {
     }
   };
 
-
-
-
   render() {
-
     return (
-      <Tab.Navigator>
+      <Tab.Navigator tabBarOptions={{ style: styles.header }}>
         <Tab.Screen name="Contacts" component={ContactsScreen} />
         <Tab.Screen name="Chats" component={ChatsScreen} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
@@ -81,7 +68,9 @@ class TabNavigator extends React.Component<Props, State> {
 }
 
 const styles = StyleSheet.create({
-
+  header: {
+    backgroundColor: '#B1D8B7'
+  }
 });
 
 

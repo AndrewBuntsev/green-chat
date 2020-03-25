@@ -24,9 +24,20 @@ type Props = {
 };
 
 type State = {
+  highlightedContactId?: string;
 };
 
 class ContactList extends React.Component<Props, State> {
+
+  state = { highlightedContactId: null };
+
+  isHighlightedChange = (contactId: string) => {
+    if (this.state.highlightedContactId == contactId) {
+      this.setState({ highlightedContactId: null });
+    } else {
+      this.setState({ highlightedContactId: contactId });
+    }
+  };
 
   onAddContactClick = () => {
     this.props.navigation.navigate('SearchContact');
@@ -48,6 +59,8 @@ class ContactList extends React.Component<Props, State> {
     const renderItem = ({ item }) => {
       return <ContactListItem
         contact={item}
+        isHighlighted={item.clientId == this.state.highlightedContactId}
+        isHighlightedChange={this.isHighlightedChange}
         selectContact={this.selectContact}
         removeContact={this.removeContact}
         key={item.clientId} />;
@@ -68,8 +81,9 @@ class ContactList extends React.Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 22,
-    justifyContent: 'space-around'
+    paddingTop: 10,
+    justifyContent: 'space-around',
+    backgroundColor: '#D2FBA4'
   },
   contacts: {
     flex: 1
