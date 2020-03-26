@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableHighlight, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableHighlight, Image, TouchableOpacity } from 'react-native';
 
 
 type Props = {
@@ -15,12 +15,12 @@ export default class SearchClientResultMenu extends React.Component<Props, State
   render() {
     return (
       <View style={styles.container}>
-        <TouchableHighlight onPress={this.props.addButtonClick} style={styles.addImageContainer}>
+        <TouchableOpacity onPress={this.props.addButtonClick} style={styles.addImageContainer}>
           <Image source={require('./../../assets/add.png')} style={styles.addImage} />
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.props.messageButtonClick} style={styles.messageImageContainer}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.props.messageButtonClick} style={styles.messageImageContainer}>
           <Image source={require('./../../assets/message.png')} style={styles.messageImage} />
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   },
   addImageContainer: {
     alignSelf: 'center',
+    backgroundColor: '#B5D595'
     //marginEnd: 20
   },
   addImage: {
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
   },
   messageImageContainer: {
     alignSelf: 'center',
+    backgroundColor: '#B5D595'
     //marginEnd: 20
   },
   messageImage: {

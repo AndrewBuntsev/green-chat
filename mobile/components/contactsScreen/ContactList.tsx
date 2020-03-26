@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   emptyListMessage: {
-    flex: 1.2,
+    flex: 1.8,
     marginLeft: 20,
     marginRight: 20,
     fontFamily: 'serif',
