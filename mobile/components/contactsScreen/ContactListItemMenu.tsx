@@ -1,7 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableHighlight, Button, Image } from 'react-native';
-import { Contact } from '../../types/Contact';
-import { getStatusImage } from '../../helpers/getStatusImage';
+import { StyleSheet, View, Text, TouchableHighlight, Image } from 'react-native';
 
 
 type Props = {
@@ -21,7 +19,7 @@ export default class ContactListItemMenu extends React.Component<Props, State> {
           <Image source={require('./../../assets/delete.png')} style={styles.deleteImage} />
         </TouchableHighlight>
         <TouchableHighlight onPress={this.props.cancelButtonClick} style={styles.cancelImageContainer}>
-          <Image source={require('./../../assets/close.png')} style={styles.cancelImage} />
+          <Image source={require('./../../assets/back.png')} style={styles.cancelImage} />
         </TouchableHighlight>
       </View>
     );
@@ -38,7 +36,7 @@ const styles = StyleSheet.create({
   },
   deleteImageContainer: {
     alignSelf: 'center',
-    marginEnd: 20
+    marginEnd: 40
   },
   deleteImage: {
     width: 30,

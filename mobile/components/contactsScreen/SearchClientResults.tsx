@@ -1,7 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Image } from 'react-native';
-import { connect } from 'react-redux';
-import { Dispatch } from 'redux';
+import { StyleSheet, Text, View, TextInput, Button, Image, FlatList } from 'react-native';
 import { Contact } from '../../types/Contact';
 import SearchClientResult from './SearchClientResult';
 
@@ -11,31 +9,57 @@ type Props = {
     addContact(clientId: string, clientName: string): void;
 };
 
-type State = {};
+type State = {
+    selectedClient: Contact;
+};
 
 export default class SearchClientResults extends React.Component<Props, State>{
+    state = { selectedClient: null };
+
     render() {
-        return <View>
-            <View>
-                <Text>{`Found ${this.props.clients.length} clients`}</Text>
+        const renderItem = ({ item }) => {
+            return <SearchClientResult
+                client={item}
+                addContact={this.props.addContact}
+                selectClient={client => this.setState({ selectedClient: client })}
+                selectedClient={this.state.selectedClient}
+                key={item.clientId}
+            />;
+        };
+
+        return (
+            <View style={styles.container}>
+                <View style={styles.headerContainer}>
+                    <Text style={styles.header}>{`Found ${this.props.clients.length} clients`}</Text>
+                </View>
+                <View style={styles.resultsPanel}>
+                    <FlatList
+                        data={this.props.clients}
+                        renderItem={renderItem}
+                        keyExtractor={item => item.clientId} />
+
+                </View>
             </View>
-            <View style={styles.resultsPanel}>
-                {this.props.clients.map(client =>
-                    <SearchClientResult
-                        clientName={client.clientName}
-                        clientId={client.clientId}
-                        addContact={this.props.addContact}
-                        key={client.clientId} />)}
-            </View>
-        </View>;
+        );
     }
 }
 
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'stretch'
+    },
+    headerContainer: {
+        alignSelf: 'center'
+    },
+    header: {
+        fontFamily: 'serif',
+        color: '#2F5233',
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+
     resultsPanel: {
-        borderColor: '#A3EBB1',
-        borderWidth: 2,
-        borderRadius: 5,
     }
 });

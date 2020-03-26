@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, Image, Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -12,6 +12,7 @@ import getTypeFromObject from '../../helpers/getTypeFromObject';
 import SearchClientResults from './SearchClientResults';
 import setClientDetails from '../../redux/actions/setClientDetails';
 import { ClientDetails } from '../../types/ClientDetails';
+import CircleButton from '../CircleButton';
 
 
 type Props = {
@@ -45,6 +46,7 @@ class SearchClient extends React.Component<Props, State>{
 
         if (response && response.status == ResponseStatus.SUCCESS && response.payload) {
             this.setState({ searchInProgress: false, searchPerformed: true, clients: getTypeFromObject<Array<Contact>>(response.payload) });
+            Keyboard.dismiss();
         } else {
             this.setState({ searchInProgress: false, searchPerformed: true });
         }
@@ -60,38 +62,88 @@ class SearchClient extends React.Component<Props, State>{
     };
 
     render() {
-        return <View>
-            <View>
-                <Text>Find new contact</Text>
+        return (
+            <View style={styles.container}>
+                <View style={styles.headerTextContainer}>
+                    <Text style={styles.headerText}>Search new contact</Text>
+                </View>
+                <View style={styles.searchInputContainer}>
+                    <TextInput
+                        value={this.state.searchTerm}
+                        placeholder='Client ID or Name'
+                        onChangeText={value => this.setState({ searchTerm: value })}
+                        style={styles.searchInput} />
+                    <View style={styles.searchButton}>
+                        <CircleButton imageSource={require('./../../assets/search.png')} onPress={this.onSearchButtonClick} />
+                    </View>
+                </View>
+
+                <View style={styles.searchResultsContainer}>
+                    {this.state.searchInProgress && <View style={styles.searchSpinnerContainer}><Image source={require('../../assets/spinner.gif')} width={50}></Image></View>}
+                    {this.state.searchPerformed && !this.state.searchInProgress && <SearchClientResults clients={this.state.clients} addContact={this.addContact} />}
+                </View>
+
+                <View style={styles.backButton}>
+                    <CircleButton imageSource={require('./../../assets/back.png')} onPress={this.props.navigation.goBack} />
+                </View>
             </View>
-            <View>
-                <TextInput
-                    value={this.state.searchTerm}
-                    placeholder='Client ID or Name'
-                    onChangeText={value => this.setState({ searchTerm: value })}
-                    style={styles.searchInput} />
-            </View>
-            <View>
-                <Button onPress={this.onSearchButtonClick} title='Search' />
-                <Button onPress={this.props.navigation.goBack} title='Cancel' />
-            </View>
-            <View>
-                {this.state.searchInProgress && <Image source={require('../../assets/spinner.gif')} width={50}></Image>}
-                {this.state.searchPerformed && <SearchClientResults clients={this.state.clients} addContact={this.addContact} />}
-            </View>
-        </View>;
+        );
     }
 }
 
 
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        backgroundColor: '#C5E5A5'
+    },
+    headerTextContainer: {
+        height: 50,
+        justifyContent: 'flex-end',
+        alignItems: 'center'
+    },
+    headerText: {
+        fontFamily: 'serif',
+        color: '#2F5233',
+        fontSize: 20,
+        fontWeight: 'bold'
+    },
+    searchInputContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center'
+    },
     searchInput: {
+        //flex: 2,
+        width: '70%',
+        height: 45,
+        fontSize: 20,
         backgroundColor: '#EEEEEE',
-        borderColor: '#A3EBB1',
+        borderColor: 'gray',
         borderWidth: 2,
-        borderRadius: 5,
+        borderRadius: 7,
         paddingHorizontal: 5
+    },
+    searchButton: {
+        //flex: 1
+    },
+
+    //-----------------
+    searchResultsContainer: {
+        flex: 1,
+        alignItems: 'stretch'
+    },
+    searchSpinnerContainer: {
+        flex: 1,
+        alignSelf: 'center'
+    },
+
+    backButton: {
+        position: 'absolute',
+        right: 20,
+        bottom: 20
     }
 });
 

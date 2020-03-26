@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableHighlight, Button, Image, Alert } from 'react-native';
+import { StyleSheet, View, Text, Image, Alert, TouchableOpacity } from 'react-native';
 import { Contact } from '../../types/Contact';
 import { getStatusImage } from '../../helpers/getStatusImage';
 import ContactListItemMenu from './ContactListItemMenu';
@@ -33,8 +33,8 @@ export default class ContactListItem extends React.Component<Props, State> {
 
   deleteContact = () => {
     Alert.alert('Delete Contact', `Are you sure you want to delete '${this.props.contact.clientName}'?`, [
-      { text: 'Yes', onPress: () => this.props.removeContact(this.props.contact.clientId) },
-      { text: 'Cancel', onPress: () => { }, style: 'cancel' }
+      { text: 'Cancel', onPress: () => { }, style: 'cancel' },
+      { text: 'Yes', onPress: () => this.props.removeContact(this.props.contact.clientId) }
     ],
       { cancelable: true });
   };
@@ -43,7 +43,7 @@ export default class ContactListItem extends React.Component<Props, State> {
   render() {
     return (
       <View>
-        <TouchableHighlight onLongPress={this.onContactLongClick} onPress={this.onContactClick}>
+        <TouchableOpacity onLongPress={this.onContactLongClick} onPress={this.onContactClick}>
           <View style={this.props.isHighlighted ? { ...styles.container, ...styles.containerExtendedMode } : styles.container}>
             <Image source={getStatusImage(this.props.contact.status)} style={styles.statusImage} />
             <Text style={styles.contactName}>
@@ -52,7 +52,7 @@ export default class ContactListItem extends React.Component<Props, State> {
             <View></View>
             {this.props.isHighlighted && <ContactListItemMenu deleteButtonClick={this.deleteContact} cancelButtonClick={this.onContactLongClick} />}
           </View>
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -65,10 +65,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 55,
     alignContent: 'center',
-    backgroundColor: '#D2FBA4'
+    backgroundColor: '#C5E5A5',
+    marginStart: 10
   },
   containerExtendedMode: {
-    backgroundColor: '#B1D8B7'
+    backgroundColor: '#B5D595'
   },
   statusImage: {
     alignSelf: 'center',

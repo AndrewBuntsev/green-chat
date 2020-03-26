@@ -17,7 +17,7 @@ class SignUp extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            clientId: uuid.v4(),
+            clientId: uuid.v4().slice(0, 9),
             clientName: ''
         }
     }

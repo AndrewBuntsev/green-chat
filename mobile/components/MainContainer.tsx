@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import * as Device from 'expo-device';
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'flex-start',
     width: '100%'
   },
   splashScreen: {

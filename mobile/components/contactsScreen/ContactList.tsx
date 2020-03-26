@@ -14,6 +14,7 @@ import setClientDetails from '../../redux/actions/setClientDetails';
 import getTypeFromObject from '../../helpers/getTypeFromObject';
 import { Contact } from '../../types/Contact';
 import setActiveContact from '../../redux/actions/setActiveContact';
+import CircleButton from '../CircleButton';
 
 
 type Props = {
@@ -70,9 +71,17 @@ class ContactList extends React.Component<Props, State> {
 
     return (
       <View style={styles.container}>
-        <FlatList data={contacts} renderItem={renderItem} keyExtractor={item => item.clientId} style={styles.contacts} />
-        {(!contacts || contacts.length == 0) && <Text>Your contact list is empty. Start your journey with adding new contacts!</Text>}
-        <Button title='+ Add Contact' onPress={this.onAddContactClick} />
+        <FlatList
+          data={contacts}
+          renderItem={renderItem}
+          keyExtractor={item => item.clientId}
+          style={styles.contacts} />
+
+        {(!contacts || contacts.length == 0) && <Text style={styles.emptyListMessage}>Your contact list is empty. Start your journey with adding new contacts!</Text>}
+
+        <View style={styles.addContactButton}>
+          <CircleButton onPress={this.onAddContactClick} imageSource={require('./../../assets/plus.png')} />
+        </View>
       </View>
     );
   }
@@ -83,13 +92,24 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 10,
     justifyContent: 'space-around',
-    backgroundColor: '#D2FBA4'
+    backgroundColor: '#C5E5A5'
   },
   contacts: {
     flex: 1
   },
+  emptyListMessage: {
+    flex: 1.2,
+    marginLeft: 20,
+    marginRight: 20,
+    fontFamily: 'serif',
+    color: '#2F5233',
+    fontSize: 20,
+    fontWeight: 'bold'
+  },
   addContactButton: {
-    flex: 1
+    position: 'absolute',
+    bottom: 20,
+    right: 20
   }
 });
 
