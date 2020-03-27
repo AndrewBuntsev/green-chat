@@ -14,6 +14,7 @@ import setActiveScreen from '../redux/actions/setActiveScreen';
 import { Screen } from '../enums/Screen';
 import getTypeFromObject from '../helpers/getTypeFromObject';
 import { ClientDetails } from '../types/ClientDetails';
+import { BODY_BACKGROUND_COLOR } from '../styles/styles';
 
 
 type Props = {
@@ -77,7 +78,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         alignItems: 'stretch',
         width: '100%',
-        backgroundColor: '#C5E5A5'
+        backgroundColor: BODY_BACKGROUND_COLOR
     },
     welcomeImage: {
         flex: 2,

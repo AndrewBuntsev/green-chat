@@ -7,16 +7,15 @@ type Props = {
   message: Message;
 };
 
-type State = {
-
-};
+type State = {};
 
 export default class MessageItem extends React.Component<Props, State> {
   render() {
     const { message } = this.props;
+    const messageStyle = message.type == MessageType.IN ? styles.messageIn : styles.messageOut;
     return (
       <View style={styles.container}>
-        <Text style={message.type == MessageType.IN ? styles.messageIn : styles.messageOut}>{message.msg}</Text>
+        <Text style={{ ...styles.message, ...messageStyle }}>{message.msg}</Text>
       </View>
     );
   }
@@ -24,14 +23,20 @@ export default class MessageItem extends React.Component<Props, State> {
 
 const styles = StyleSheet.create({
   container: {
+    margin: 3
+  },
+  message: {
     borderColor: '#AAAAAA',
-    borderRadius: 5,
-    borderWidth: 1
+    borderWidth: 2,
+    borderRadius: 10,
+    padding: 3
   },
   messageIn: {
-    backgroundColor: '#DDDDDD'
+    backgroundColor: '#DDDDDD',
+    marginRight: 60
   },
   messageOut: {
-    backgroundColor: '#FADCD9'
+    marginLeft: 60,
+    backgroundColor: '#A4E8E0'
   }
 });

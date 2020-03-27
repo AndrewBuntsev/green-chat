@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Image, Alert, TouchableOpacity } from 'react-na
 import { Contact } from '../../types/Contact';
 import { getStatusImage } from '../../helpers/getStatusImage';
 import ContactListItemMenu from './ContactListItemMenu';
+import { BODY_BACKGROUND_COLOR } from '../../styles/styles';
 
 
 type Props = {
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     height: 55,
     alignContent: 'center',
-    backgroundColor: '#C5E5A5',
+    backgroundColor: BODY_BACKGROUND_COLOR,
     marginStart: 10
   },
   containerExtendedMode: {

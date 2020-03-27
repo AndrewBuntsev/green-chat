@@ -13,6 +13,7 @@ import SearchClientResults from './SearchClientResults';
 import setClientDetails from '../../redux/actions/setClientDetails';
 import { ClientDetails } from '../../types/ClientDetails';
 import CircleButton from '../CircleButton';
+import { BODY_BACKGROUND_COLOR } from '../../styles/styles';
 
 
 type Props = {
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: '#C5E5A5'
+        backgroundColor: BODY_BACKGROUND_COLOR
     },
     headerTextContainer: {
         height: 50,
