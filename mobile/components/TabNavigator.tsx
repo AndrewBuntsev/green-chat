@@ -32,6 +32,7 @@ type State = {
 
 };
 
+
 class TabNavigator extends React.Component<Props, State> {
 
   refreshTimer: number;
@@ -54,7 +55,7 @@ class TabNavigator extends React.Component<Props, State> {
 
   render() {
     return (
-      <Tab.Navigator tabBarOptions={{ style: styles.header }}>
+      <Tab.Navigator tabBarOptions={{ style: styles.header }} >
         <Tab.Screen name="Contacts" component={ContactsScreen} />
         <Tab.Screen name="Chats" component={ChatsScreen} />
         <Tab.Screen name="Settings" component={SettingsScreen} />

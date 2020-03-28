@@ -14,7 +14,7 @@ import setActiveScreen from '../redux/actions/setActiveScreen';
 import { Screen } from '../enums/Screen';
 import getTypeFromObject from '../helpers/getTypeFromObject';
 import { ClientDetails } from '../types/ClientDetails';
-import { BODY_BACKGROUND_COLOR } from '../styles/styles';
+import { BODY_BACKGROUND_COLOR, COMMON_TEXT_STYLE, COMMON_INPUT_STYLE } from '../styles/styles';
 
 
 type Props = {
@@ -44,20 +44,20 @@ class SignUp extends React.Component<Props, State> {
         return (
             <View style={styles.container}>
                 <View style={styles.welcomeImage}>
-                    <Text style={styles.subCaption}>Welcome to</Text>
+                    <Text style={{ ...styles.subCaption, ...StyleSheet.flatten(COMMON_TEXT_STYLE) }}>Welcome to</Text>
                     <Text style={styles.caption}>GreenChat</Text>
                 </View>
 
                 <View style={styles.welcomeTextContainer}>
-                    <Text style={styles.welcomeText}>It looks like your first time here!</Text>
-                    <Text style={styles.welcomeText}>Your ID is {this.props.clientId}</Text>
-                    <Text style={styles.welcomeText}>Please tell us your name</Text>
+                    <Text style={COMMON_TEXT_STYLE}>It looks like your first time here!</Text>
+                    <Text style={COMMON_TEXT_STYLE}>Your ID is {this.props.clientId}</Text>
+                    <Text style={COMMON_TEXT_STYLE}>Please tell us your name</Text>
                 </View>
 
                 <View style={styles.nameInputContainer}>
                     <TextInput value={this.state.clientName}
                         placeholder='Your Name'
-                        style={styles.nameInput}
+                        style={{ ...styles.nameInput, ...COMMON_INPUT_STYLE }}
                         onChangeText={value => this.setState({ clientName: value })} />
                     <TouchableOpacity onPress={this.onLoginClick}>
                         <Image source={require('../assets/letsgo.png')} style={styles.buttonStart} />
@@ -87,11 +87,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     subCaption: {
-        alignSelf: 'center',
-        fontFamily: 'serif',
-        color: '#2F5233',
-        fontSize: 20,
-        fontWeight: 'bold'
+        alignSelf: 'center'
     },
     caption: {
         alignSelf: 'center',
@@ -108,12 +104,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center'
     },
-    welcomeText: {
-        fontFamily: 'serif',
-        color: '#2F5233',
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
     nameInputContainer: {
         flex: 1,
         flexDirection: 'row',
@@ -125,13 +115,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         width: '70%',
         marginTop: 17,
-        height: 45,
-        fontSize: 20,
-        backgroundColor: '#EEEEEE',
-        borderColor: 'gray',
-        borderWidth: 2,
-        borderRadius: 7,
-        paddingHorizontal: 5
+        height: 45
     },
     buttonStart: {
         alignSelf: 'flex-start',

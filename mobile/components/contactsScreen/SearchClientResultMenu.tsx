@@ -16,7 +16,7 @@ export default class SearchClientResultMenu extends React.Component<Props, State
     return (
       <View style={styles.container}>
         <TouchableOpacity onPress={this.props.addButtonClick} style={styles.addImageContainer}>
-          <Image source={require('./../../assets/add.png')} style={styles.addImage} />
+          <Image source={require('./../../assets/circle-plus.png')} style={styles.addImage} />
         </TouchableOpacity>
         <TouchableOpacity onPress={this.props.messageButtonClick} style={styles.messageImageContainer}>
           <Image source={require('./../../assets/message.png')} style={styles.messageImage} />

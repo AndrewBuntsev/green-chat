@@ -13,7 +13,7 @@ import SearchClientResults from './SearchClientResults';
 import setClientDetails from '../../redux/actions/setClientDetails';
 import { ClientDetails } from '../../types/ClientDetails';
 import CircleButton from '../CircleButton';
-import { BODY_BACKGROUND_COLOR } from '../../styles/styles';
+import { BODY_BACKGROUND_COLOR, COMMON_TEXT_STYLE, COMMON_INPUT_STYLE } from '../../styles/styles';
 
 
 type Props = {
@@ -66,14 +66,14 @@ class SearchClient extends React.Component<Props, State>{
         return (
             <View style={styles.container}>
                 <View style={styles.headerTextContainer}>
-                    <Text style={styles.headerText}>Search new contact</Text>
+                    <Text style={COMMON_TEXT_STYLE}>Search new contact</Text>
                 </View>
                 <View style={styles.searchInputContainer}>
                     <TextInput
                         value={this.state.searchTerm}
                         placeholder='Client ID or Name'
                         onChangeText={value => this.setState({ searchTerm: value })}
-                        style={styles.searchInput} />
+                        style={{ ...styles.searchInput, ...COMMON_INPUT_STYLE }} />
                     <View style={styles.searchButton}>
                         <CircleButton imageSource={require('./../../assets/search.png')} onPress={this.onSearchButtonClick} />
                     </View>
@@ -105,27 +105,14 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center'
     },
-    headerText: {
-        fontFamily: 'serif',
-        color: '#2F5233',
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
     searchInputContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
         alignItems: 'center'
     },
     searchInput: {
-        //flex: 2,
         width: '70%',
-        height: 45,
-        fontSize: 20,
-        backgroundColor: '#EEEEEE',
-        borderColor: 'gray',
-        borderWidth: 2,
-        borderRadius: 7,
-        paddingHorizontal: 5
+        height: 45
     },
     searchButton: {
         //flex: 1

@@ -15,7 +15,7 @@ import MessageItem from './MessageItem';
 import { Action } from '../../redux/Action';
 import dispatchCombinedAction from '../../redux/actions/dispatchCombinedAction';
 import setActiveContact from '../../redux/actions/setActiveContact';
-import { BODY_BACKGROUND_COLOR } from '../../styles/styles';
+import { BODY_BACKGROUND_COLOR, COMMON_TEXT_STYLE, COMMON_INPUT_STYLE } from '../../styles/styles';
 import CircleButton from '../CircleButton';
 
 
@@ -50,7 +50,9 @@ class Messages extends React.Component<Props, State>{
     componentDidMount() {
         this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
         this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this.keyboardDidHide);
-        setTimeout(() => { (this.refs[MESSAGES_FLAT_LIST] as any).scrollToEnd() }, 1000);
+        if (this.props.activeContact.messages && this.props.activeContact.messages.length > 0) {
+            setTimeout(() => { (this.refs[MESSAGES_FLAT_LIST] as any).scrollToEnd() }, 1000);
+        }
     }
 
     keyboardDidShow = (e: object) => {
@@ -85,12 +87,8 @@ class Messages extends React.Component<Props, State>{
         return (
             <View style={styles.container}>
 
-                {/* <View style={styles.backButtonContainer}>
-                    <CircleButton imageSource={require('./../../assets/back.png')} onPress={this.goBack} style={styles.backButton} />
-                </View> */}
-
                 <View style={styles.messagesContainer}>
-                    {(!messages || messages.length == 0) && <View style={styles.noMessagesTextContainer}><Text style={styles.noMessagesText}>No conversation here yet!</Text></View>}
+                    {(!messages || messages.length == 0) && <View style={styles.noMessagesTextContainer}><Text style={COMMON_TEXT_STYLE}>No conversation here yet!</Text></View>}
                     <FlatList
                         data={this.props.activeContact.messages}
                         renderItem={renderItem}
@@ -100,7 +98,7 @@ class Messages extends React.Component<Props, State>{
 
                 <View style={styles.newMessageContainer}>
                     <TextInput
-                        style={styles.newMessage}
+                        style={{ ...styles.newMessage, ...COMMON_INPUT_STYLE }}
                         value={this.state.newMessage}
                         onChangeText={newMessage => this.setState({ newMessage })}
                         multiline={true}
@@ -134,14 +132,6 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: BODY_BACKGROUND_COLOR
     },
-    // backButtonContainer: {
-    // },
-    // backButton: {
-    //     marginTop: 5,
-    //     marginLeft: 5,
-    //     width: 60,
-    //     height: 60
-    // },
     messagesContainer: {
         flex: 1,
         margin: 6
@@ -151,12 +141,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center'
     },
-    noMessagesText: {
-        fontFamily: 'serif',
-        color: '#2F5233',
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
     newMessageContainer: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
@@ -164,13 +148,7 @@ const styles = StyleSheet.create({
     },
     newMessage: {
         width: '80%',
-        margin: 6,
-        fontSize: 20,
-        backgroundColor: '#EEEEEE',
-        borderColor: 'gray',
-        borderWidth: 2,
-        borderRadius: 7,
-        paddingHorizontal: 5
+        margin: 6
     },
     sendButton: {
         width: 60,

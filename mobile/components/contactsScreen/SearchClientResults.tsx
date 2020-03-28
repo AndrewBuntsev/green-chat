@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button, Image, FlatList } from 'react-native';
 import { Contact } from '../../types/Contact';
 import SearchClientResult from './SearchClientResult';
+import { COMMON_TEXT_STYLE } from '../../styles/styles';
 
 
 type Props = {
@@ -30,7 +31,7 @@ export default class SearchClientResults extends React.Component<Props, State>{
         return (
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
-                    <Text style={styles.header}>{`Found ${this.props.clients.length} clients`}</Text>
+                    <Text style={COMMON_TEXT_STYLE}>{`Found ${this.props.clients.length} clients`}</Text>
                 </View>
                 <View style={styles.resultsPanel}>
                     <FlatList
@@ -53,13 +54,6 @@ const styles = StyleSheet.create({
     headerContainer: {
         alignSelf: 'center'
     },
-    header: {
-        fontFamily: 'serif',
-        color: '#2F5233',
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
-
     resultsPanel: {
     }
 });

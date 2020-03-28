@@ -15,6 +15,7 @@ import getTypeFromObject from '../../helpers/getTypeFromObject';
 import { Contact } from '../../types/Contact';
 import setActiveContact from '../../redux/actions/setActiveContact';
 import CircleButton from '../CircleButton';
+import { COMMON_TEXT_STYLE } from '../../styles/styles';
 
 
 type Props = {
@@ -77,7 +78,7 @@ class ContactList extends React.Component<Props, State> {
           keyExtractor={item => item.clientId}
           style={styles.contacts} />
 
-        {(!contacts || contacts.length == 0) && <Text style={styles.emptyListMessage}>Your contact list is empty. Start your journey with adding new contacts!</Text>}
+        {(!contacts || contacts.length == 0) && <Text style={{ ...styles.emptyListMessage, ...StyleSheet.flatten(COMMON_TEXT_STYLE) }}>Your contact list is empty. Start your journey with adding new contacts!</Text>}
 
         <View style={styles.addContactButton}>
           <CircleButton onPress={this.onAddContactClick} imageSource={require('./../../assets/plus.png')} />
@@ -100,11 +101,7 @@ const styles = StyleSheet.create({
   emptyListMessage: {
     flex: 1.8,
     marginLeft: 20,
-    marginRight: 20,
-    fontFamily: 'serif',
-    color: '#2F5233',
-    fontSize: 20,
-    fontWeight: 'bold'
+    marginRight: 20
   },
   addContactButton: {
     position: 'absolute',

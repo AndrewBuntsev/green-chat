@@ -15,11 +15,11 @@ export default class ContactListItemMenu extends React.Component<Props, State> {
   render() {
     return (
       <View style={styles.container}>
+        <TouchableHighlight onPress={this.props.cancelButtonClick} style={styles.cancelImageContainer}>
+          <Image source={require('./../../assets/x.png')} style={styles.cancelImage} />
+        </TouchableHighlight>
         <TouchableHighlight onPress={this.props.deleteButtonClick} style={styles.deleteImageContainer}>
           <Image source={require('./../../assets/delete.png')} style={styles.deleteImage} />
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this.props.cancelButtonClick} style={styles.cancelImageContainer}>
-          <Image source={require('./../../assets/back.png')} style={styles.cancelImage} />
         </TouchableHighlight>
       </View>
     );
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   deleteImageContainer: {
     alignSelf: 'center',
-    marginEnd: 40
+    marginEnd: 20
   },
   deleteImage: {
     width: 30,
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
   cancelImageContainer: {
     alignSelf: 'center',
-    marginEnd: 20
+    marginEnd: 40
   },
   cancelImage: {
     width: 30,
