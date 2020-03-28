@@ -35,7 +35,7 @@ class MainContainer extends React.Component<Props, State> {
   async componentDidMount() {
     let response: Response = await api.getClient(Device.osInternalBuildId);
 
-    console.log(response);
+    //console.log(response);
     if (response && response.status == ResponseStatus.SUCCESS) {
       if (response.payload) {
         const { clientId, clientName, showNotifications, gender } = getTypeFromObject<ClientDetails>(response.payload);

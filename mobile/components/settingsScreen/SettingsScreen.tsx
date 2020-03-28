@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { StyleSheet, View, Text, FlatList, Button, Switch, TextInput, Picker } from 'react-native';
+import { StyleSheet, View, Text, FlatList, Button, Switch, TextInput, Picker, Keyboard } from 'react-native';
+import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
+
 
 import * as api from './../../api';
 import * as store from '../../redux/store';
@@ -12,7 +14,22 @@ import { Response } from '../../types/Response';
 import getTypeFromObject from '../../helpers/getTypeFromObject';
 import { Gender } from '../../enums/Gender';
 import { ClientStatus } from '../../enums/ClientStatus';
+import { BODY_BACKGROUND_COLOR, COMMON_INPUT_STYLE } from '../../styles/styles';
+import CircleButton from '../CircleButton';
+import RadioButtonGroup from '../RadioButtonGroup';
 
+
+const STATUS_LIST = [
+  { label: 'Online', value: ClientStatus.ONLINE },
+  { label: 'Away', value: ClientStatus.AWAY },
+  { label: 'Invisible', value: ClientStatus.INVISIBLE }
+];
+
+const GENDER_LIST = [
+  { label: 'Male', value: Gender.MALE },
+  { label: 'Female', value: Gender.FEMALE },
+  { label: 'Unknown', value: Gender.UNKNOWN }
+];
 
 type Props = {
   clientDetails: ClientDetails;
@@ -41,6 +58,7 @@ class SettingsScreen extends React.Component<Props, State> {
     if (response && response.status == ResponseStatus.SUCCESS && response.payload) {
       const clientDetails = getTypeFromObject<ClientDetails>(response.payload);
       this.props.setClientDetails(clientDetails);
+      Keyboard.dismiss();
     }
   };
 
@@ -79,47 +97,74 @@ class SettingsScreen extends React.Component<Props, State> {
 
 
   render() {
-    return <View>
-      <View>
-        <Text>Name</Text>
-        <TextInput
-          value={this.state.clientName}
-          onChangeText={value => this.setState({ clientName: value })} />
-        <Button title='Update Name' onPress={this.clientNameChange} />
-      </View>
 
-      <View>
-        <Text>Show Notifications</Text>
-        <Switch
-          value={this.state.showNotifications}
-          onValueChange={this.showNotificationsChange} />
-      </View>
 
-      <View>
-        <Text>Gender</Text>
-        <Picker
-          selectedValue={this.state.gender}
-          onValueChange={this.genderChange}>
-          <Picker.Item label='Unknown' value={Gender.UNKNOWN} />
-          <Picker.Item label='Male' value={Gender.MALE} />
-          <Picker.Item label='Female' value={Gender.FEMALE} />
-        </Picker>
-      </View>
 
-      <View>
-        <Text>Status</Text>
-        <Picker
-          selectedValue={this.state.status}
-          onValueChange={this.statusChange}>
-          <Picker.Item label='Online' value={ClientStatus.ONLINE} />
-          <Picker.Item label='Away' value={ClientStatus.AWAY} />
-          <Picker.Item label='Invisible' value={ClientStatus.INVISIBLE} />
-        </Picker>
-      </View>
 
-    </View>;
+    return (
+      <View style={styles.container}>
+        <View style={styles.rowContainer}>
+          <Text style={styles.label}>Name:</Text>
+          <TextInput
+            style={{ ...COMMON_INPUT_STYLE, ...styles.nameInput }}
+            value={this.state.clientName}
+            onChangeText={value => this.setState({ clientName: value })} />
+          <CircleButton imageSource={require('./../../assets/save-24.png')} onPress={this.clientNameChange} style={styles.saveNameButton} />
+        </View>
+
+        <View style={styles.rowContainer}>
+          <Text style={styles.label}>Show Notifications</Text>
+          <Switch
+            value={this.state.showNotifications}
+            onValueChange={this.showNotificationsChange} />
+        </View>
+
+        <View style={styles.genderContainer}>
+          <Text style={styles.label}>Gender</Text>
+          <RadioButtonGroup options={GENDER_LIST} selectedOption={this.state.gender} selectOption={this.genderChange} />
+        </View>
+
+        <View style={styles.statusContainer}>
+          <Text style={styles.label}>Status</Text>
+          <RadioButtonGroup options={STATUS_LIST} selectedOption={this.state.status} selectOption={this.statusChange} />
+        </View>
+
+      </View>
+    );
   }
 }
+
+
+const styles = StyleSheet.create({
+  //---Global---
+  container: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: BODY_BACKGROUND_COLOR
+  },
+  label: {
+    fontSize: 18
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: 60
+  },
+  nameInput: {
+    width: '65%'
+  },
+  saveNameButton: {
+    width: 50,
+    height: 50
+  },
+  genderContainer: {
+    marginTop: 14
+  },
+  statusContainer: {
+    marginTop: 14
+  }
+});
 
 
 const mapStateToProps = (state: store.State): object => ({
