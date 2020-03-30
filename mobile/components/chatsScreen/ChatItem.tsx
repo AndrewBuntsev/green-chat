@@ -30,7 +30,7 @@ export default class ChatItem extends React.Component<Props, State> {
     if (lastMessageText.length > LAST_MESSAGE_LIMIT) {
       lastMessageText = `${lastMessageText.slice(0, LAST_MESSAGE_LIMIT)} ...`;
     }
-    console.log(lastMessage)
+    //console.log(lastMessage)
 
 
     return (

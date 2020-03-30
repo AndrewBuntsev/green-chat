@@ -9,7 +9,7 @@ type Props = {
 type State = {
 };
 
-export default class CircleButton extends React.Component<Props, State>{
+export default class CircleButton extends React.PureComponent<Props, State>{
     render() {
         return <TouchableOpacity
             onPress={this.props.onPress}

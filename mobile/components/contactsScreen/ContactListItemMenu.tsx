@@ -11,7 +11,7 @@ type State = {
 
 };
 
-export default class ContactListItemMenu extends React.Component<Props, State> {
+export default class ContactListItemMenu extends React.PureComponent<Props, State> {
   render() {
     return (
       <View style={styles.container}>

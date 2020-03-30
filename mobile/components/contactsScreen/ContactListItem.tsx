@@ -4,6 +4,7 @@ import { Contact } from '../../types/Contact';
 import { getStatusImage } from '../../helpers/getStatusImage';
 import ContactListItemMenu from './ContactListItemMenu';
 import { BODY_BACKGROUND_COLOR } from '../../styles/styles';
+import BlinkingImage from '../BlinkingImage';
 
 
 type Props = {
@@ -16,6 +17,7 @@ type Props = {
 
 type State = {
   hasNewMessages: boolean;
+  messagesNumber?: number;
 };
 
 export default class ContactListItem extends React.Component<Props, State> {
@@ -29,6 +31,7 @@ export default class ContactListItem extends React.Component<Props, State> {
   };
 
   onContactLongClick = () => {
+    this.setState({ hasNewMessages: false });
     this.props.isHighlightedChange(this.props.contact.clientId);
   };
 
@@ -40,6 +43,19 @@ export default class ContactListItem extends React.Component<Props, State> {
       { cancelable: true });
   };
 
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
+    const newMessagesLength = nextProps.contact.messages ? nextProps.contact.messages.length : 0;
+    if (!prevState.messagesNumber) {
+      return { messagesNumber: newMessagesLength };
+    }
+
+    if (newMessagesLength != prevState.messagesNumber) {
+      return { messagesNumber: newMessagesLength, hasNewMessages: true };
+    }
+
+    return null;
+  }
+
 
   render() {
     return (
@@ -47,10 +63,15 @@ export default class ContactListItem extends React.Component<Props, State> {
         <TouchableOpacity onLongPress={this.onContactLongClick} onPress={this.onContactClick}>
           <View style={this.props.isHighlighted ? { ...styles.container, ...styles.containerExtendedMode } : styles.container}>
             <Image source={getStatusImage(this.props.contact.status)} style={styles.statusImage} />
+
             <Text style={styles.contactName}>
               {this.props.contact.clientName}
             </Text>
-            <View></View>
+
+            <View style={styles.newMessageIconContainer}>
+              {this.state.hasNewMessages && <BlinkingImage imageSource={require('./../../assets/message-24.png')} interval={500} />}
+            </View>
+
             {this.props.isHighlighted && <ContactListItemMenu deleteButtonClick={this.deleteContact} cancelButtonClick={this.onContactLongClick} />}
           </View>
         </TouchableOpacity>
@@ -79,13 +100,18 @@ const styles = StyleSheet.create({
   },
   contactName: {
     alignSelf: 'center',
-    flex: 1,
     fontSize: 18,
-
     marginStart: 5,
     marginVertical: -3
   },
-  buttonDelete: {
-    flex: 1
+  newMessageIconContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    marginLeft: 7
+  },
+  newMessageIcon: {
+    //flex: 1,
+
   }
 });

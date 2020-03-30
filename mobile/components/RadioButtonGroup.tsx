@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
-import { ClientStatus } from '../enums/ClientStatus';
 
 
 type Props = {
@@ -12,7 +11,7 @@ type Props = {
 
 type State = {};
 
-export default class RadioButtonGroup extends React.Component<Props, State> {
+export default class RadioButtonGroup extends React.PureComponent<Props, State> {
     render() {
         const radioButtons = this.props.options.map((obj, i) => (
             <RadioButton labelHorizontal={true} key={i} >
