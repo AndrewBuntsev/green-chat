@@ -1,14 +1,13 @@
 import * as Redux from 'redux';
 
 import rootReducer from './rootReducer';
-import * as screens from './../const/screens';
+import { Screen } from '../enums/Screen';
+import { AppState } from '../types/AppState';
 
 
-
-
-const defaultState = {
-    clientDetails: {},
-    activeScreen: screens.SPLASH,
+const defaultState: AppState = {
+    activeScreen: Screen.SPLASH,
+    clientDetails: null,
     activeContact: null
 };
 

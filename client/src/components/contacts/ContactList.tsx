@@ -1,26 +1,26 @@
-import React, { Component } from 'react';
+import React, { Component, CSSProperties } from 'react';
 import SearchClient from './SearchClient';
 import ContactListItem from './ContactListItem';
+import { Contact } from '../../types/Contact';
 
 
-const styles = {
-  container: {
-    overflow: 'auto',
-    listStyle: 'none',
-    fontFamily: 'Garamond, serif',
-    padding: '0.5em',
-    gridColumn: '1',
-    gridRow: '2'
-  },
-  addContactButton: {
-    width: '100%'
-  }
+type Props = {
+  activeContact: Contact;
+  contacts: Array<Contact>;
+  addContact(clientId: string, clientName: string): void;
+  removeContact(contactId: string): void;
+  setActiveContact(contact: Contact): void;
+};
+type State = {
+  displaySearchClientsPanel: boolean;
 };
 
-export default class ContactList extends Component {
-  state = { displaySearchClientsPanel: false };
+export default class ContactList extends Component<Props, State> {
+  state = {
+    displaySearchClientsPanel: false
+  };
 
-  addContact = (clientId, clientName) => {
+  addContact = (clientId: string, clientName: string) => {
     this.props.addContact(clientId, clientName);
     this.setState({ displaySearchClientsPanel: false });
   };
@@ -53,3 +53,18 @@ export default class ContactList extends Component {
 }
 
 
+
+
+const styles = {
+  container: {
+    overflow: 'auto',
+    listStyle: 'none',
+    fontFamily: 'Garamond, serif',
+    padding: '0.5em',
+    gridColumn: '1',
+    gridRow: '2'
+  } as CSSProperties,
+  addContactButton: {
+    width: '100%'
+  } as CSSProperties
+};
