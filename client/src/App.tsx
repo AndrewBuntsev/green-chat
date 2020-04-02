@@ -24,11 +24,15 @@ type Props = {
   dispatchCombinedAction(actions: Array<Action>): Action;
   setActiveScreen(activeScreen: Screen): void;
 };
-type State = {};
+type State = {
+  hasError: boolean;
+};
 
 
 class App extends React.Component<Props, State> {
-  //TODO: add error handlig from the API calls
+  state = {
+    hasError: false
+  }
 
   //TODO: add cookie manager
   async componentDidMount() {
@@ -42,11 +46,14 @@ class App extends React.Component<Props, State> {
       }
     }
 
-    // display the SignUp screen
     this.props.setActiveScreen(Screen.SIGNIN);
   }
 
   render() {
+    if (this.state.hasError) {
+      return <div>Something is wrong</div>;
+    }
+
     return (
       <div className="App">
         {this.props.activeScreen == Screen.SPLASH && <Splash />}
@@ -56,6 +63,15 @@ class App extends React.Component<Props, State> {
         {this.props.activeScreen == Screen.SETTINGS && <SettingsScreen />}
       </div>
     );
+  }
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, info: any) {
+    console.error(error);
+    console.warn(info);
   }
 }
 
