@@ -231,8 +231,9 @@ async function refreshClientsData() {
         .toArray();
 
     await Promise.all(clientsToRefresh.map(client => db.collection('clients').updateOne({ clientId: client.clientId }, { $set: { isRefreshRequired: false } })));
-    await Promise.all(clientsToRefresh.map(client =>
-        Promise.all(client.contacts.map(contact =>
+    await Promise.all(clientsToRefresh.map(client => {
+        const contacts = client.contacts ? client.contacts : [];
+        return Promise.all(contacts.map(contact =>
             db.collection('clients').updateOne(
                 { clientId: contact.clientId, 'contacts.clientId': client.clientId },
                 {
@@ -243,7 +244,9 @@ async function refreshClientsData() {
                         'contacts.$.status': client.status
                     }
                 })
-        ))));
+        ))
+    }
+    ));
 
     mongoClient.close();
 }
